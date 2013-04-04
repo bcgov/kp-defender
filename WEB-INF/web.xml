@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>QPStandards</display-name>
+  <servlet>
+    <description>This sets up our JAX-RS url mapping. Note that the app is used as a 
+  			pre-curser to ensure we don't get into a resource infinite loop as noted 
+  			below.</description>
+    <servlet-name>qpDefender</servlet-name>
+    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <description>This parameter is needed to enable security annotation for Jersey 
+				within a J2EE container.</description>
+      <param-name>com.sun.jersey.spi.container.ResourceFilters</param-name>
+      <param-value>com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>qpDefender</servlet-name>
+    <url-pattern>/app/*</url-pattern>
+  </servlet-mapping>
+  <resource-ref>
+    <description>DB Connection Pool</description>
+    <res-ref-name>jdbc/QP_Security</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>MyRealm</web-resource-name>
+      <description>Security for entire project</description>
+      <url-pattern>/app/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+      <http-method>PUT</http-method>
+      <http-method>DELETE</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <description>Allow all roles access to our security-domain. Let the annotations
+				within the classes take care of restrictions.</description>
+      <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>QP</auth-method>
+    <form-login-config>
+      <form-login-page>/logon.jsp</form-login-page>
+      <form-error-page>/logonError.jsp</form-error-page>
+    </form-login-config>
+  </login-config>
+  <security-role>
+    <role-name>qpadmin</role-name>
+  </security-role>
+  <security-role>
+    <role-name>qpsecurity.guest</role-name>
+  </security-role>
+</web-app>
