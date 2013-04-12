@@ -22,7 +22,7 @@ public class Utility {
            writer.flush();
            return writer.toString();
         }
-        catch(TransformerException ex)
+        catch(Exception ex)
         {
            ex.printStackTrace();
            return null;

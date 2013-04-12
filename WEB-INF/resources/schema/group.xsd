@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:include schemaLocation="user.xsd"/>
+	<xsd:include schemaLocation="useraccess.xsd"/>
+	<xsd:include schemaLocation="groupProduct.xsd"/>
+
+
+	<xsd:element name="group" type="group_type"/>
+
+	<xsd:complexType name="group_type">
+		<xsd:sequence>
+			<xsd:element name="id" type="xsd:integer"/>
+			<xsd:element name="active" type="xsd:boolean"/>
+			<xsd:element name="custType" type="xsd:integer"/>
+			<xsd:element name="company_ministry" type="xsd:string"/>
+			<xsd:element name="dept_branch" type="xsd:string"/>
+			<xsd:element name="addr1" type="xsd:string"/>
+			<xsd:element name="addr2" type="xsd:string"/>
+			<xsd:element name="city" type="xsd:string"/>
+			<xsd:element name="prov" type="xsd:string"/>
+			<xsd:element name="country" type="xsd:string"/>
+			<xsd:element name="pcode" type="xsd:string"/>
+			<xsd:element name="phone" type="xsd:string"/>
+			<xsd:element name="fax" type="xsd:string"/>
+			<xsd:element name="email" type="xsd:string"/>
+			<xsd:element name="contact_name" type="xsd:string"/>
+			<xsd:element name="contact_phone" type="xsd:string"/>
+			<xsd:element name="contact_email" type="xsd:string"/>
+			<xsd:element name="start_dt" type="xsd:string"/>
+			<xsd:element name="expiry_dt" type="xsd:string"/>
+			<xsd:element name="insert_dt" type="xsd:string"/>
+			<xsd:element name="insert_user" type="user_type"/>
+			<xsd:element name="modify_dt" type="xsd:string"/>
+			<xsd:element name="modify_user" type="user_type"/>
+			<xsd:element name="cust_note" type="xsd:string"/>
+			<xsd:element name="s_package" type="xsd:string"/>
+			<xsd:element name="auto_expire" type="xsd:boolean"/>
+			<xsd:element name="daysleft" type="xsd:integer"/>
+			<xsd:element name="organisation_type" type="xsd:string"/>
+			<xsd:element name="contact_fax" type="xsd:string"/>
+			<xsd:element name="sap_order" type="xsd:string"/>
+			<xsd:element name="sap_customer" type="xsd:string"/>
+			<xsd:element name="users">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="useraccess" type="useraccess_type" maxOccurs="unbounded" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="groupProducts">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="groupProduct" maxOccurs="unbounded" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<!--
+			<xsd:element name="insert_user" type="user_type"/>
+			<xsd:element name="modify_dt" type="xsd:string"/>
+			<xsd:element name="modify_user" type="user_type"/>
+			<xsd:element name="cust_note" type="xsd:string"/>
+			<xsd:element name="s_package" type="xsd:string"/>
+			<xsd:element name="auto_expire" type="xsd:boolean"/>
+			<xsd:element name="daysleft" type="xsd:integer"/>
+			<xsd:element name="organisation_type" type="xsd:string"/>
+			<xsd:element name="contact_fax" type="xsd:string"/>
+			<xsd:element name="sap_order" type="xsd:string"/>
+			<xsd:element name="sap_customer" type="xsd:string"/>
+			<xsd:element name="users" -->
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:include schemaLocation="productAccess.xsd"/>
+	<xsd:include schemaLocation="user.xsd"/>
+
+	<xsd:element name="useraccess" type="useraccess_type"/>
+
+	<xsd:complexType name="useraccess_type">
+		<xsd:sequence>
+			<xsd:element name="credential" type="xsd:string"/>
+			<xsd:element name="credentialType" type="xsd:string"/>
+			<xsd:element name="productAccess" type="productAccessType" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element ref="user"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2013, Queen's Printer of British Columbia, Canada and/or its affiliates. 
+ * All rights reserved. DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE Header.
+ * 
+ * Please contact Queen's Printer of British Columbia, PO Box 9452 Stn Prov Govt, Victoria 
+ * BC, V8W 9V7, (250) 387-3309 if you have any questions or have received this class in 
+ * error.
+ * 
+ */
 package gov.ca.bc.qp.QPDefender.web;
 
 import java.net.URL;
@@ -31,6 +40,10 @@ import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
+/**
+ * JAX-RS interface for accessing product information.
+ * @author spencer.tickner
+ */
 @Path("{xsl:.+}/products")
 public class WebProduct {
 
@@ -48,12 +61,11 @@ public class WebProduct {
 		QPPrincipal principal = null;
 		if(securityContext != null)
 			principal = (QPPrincipal)securityContext.getUserPrincipal();
-		
 		return principal;
 	}
 	
 	// Get our xslt path for transformations.
-	@PathParam("xsl") public String xsl_global;
+	@PathParam("xsl") public String xsl_global = "";
 	
 	@POST
 	@Path("/add")
