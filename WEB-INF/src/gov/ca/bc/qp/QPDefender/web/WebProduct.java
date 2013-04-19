@@ -65,7 +65,7 @@ public class WebProduct {
 	}
 	
 	// Get our xslt path for transformations.
-	@PathParam("xsl") public String xsl_global = "";
+	@PathParam("xsl") public String xsl_global;
 	
 	@POST
 	@Path("/add")
@@ -86,7 +86,7 @@ public class WebProduct {
 	@GET
 	@Path("/all")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
-	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GUEST})
+	@RolesAllowed({MyRoles.QP_ADMIN})
 	public Response getProducts() {
 		MediaType type = MediaType.APPLICATION_XML_TYPE;
 		QPMarshaller marshaller = new QPMarshaller();

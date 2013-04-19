@@ -9,6 +9,7 @@
  */
 package gov.ca.bc.qp.QPDefender.beans;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -54,11 +55,11 @@ public class Group implements QPBean {
 	private String contact_name = "";
 	private String contact_phone = "";
 	private String contact_email = "";
-	private Date start_dt = null;
-	private Date expiry_dt = null;
-	private Date insert_dt = null;
+	private Date start_dt = ObjectUtil.getEmptyDate();
+	private Date expiry_dt = ObjectUtil.getEmptyDate();
+	private Date insert_dt = ObjectUtil.getEmptyDate();
 	private User insert_user = new User();
-	private Date modify_dt = null;
+	private Date modify_dt = ObjectUtil.getEmptyDate();
 	private User modify_user = new User();
 	private String cust_note = "";
 	private String s_package = "";
@@ -212,6 +213,24 @@ public class Group implements QPBean {
 						ObjectUtil.equal(this.getUseraccess(), g.getUseraccess())
 					);
 			}
+		}
+		return equal;
+	}
+	
+	/**
+	 * For Groups we consider null lists and empty lists equivalent. This method is 
+	 * needed to ensure the test for this is correct.
+	 * @param arg1	A List of QPBeans.
+	 * @param arg2	An equivalent list of QPBeans.
+	 * @return Whether or not the two lists are equla where null is equal to empty.
+	 */
+	private boolean equal(List<? extends QPBean> arg1, List<? extends QPBean> arg2) {
+		boolean equal = false;
+		if(arg1 == null && arg2 == null) {
+			// Both are null, we consider this equal
+			equal = true;
+		} else if(arg1 == null || arg2 == null) {
+			// Here things get a little more complicated. If one is null and the other is empty, consider equal.
 		}
 		return equal;
 	}
@@ -499,7 +518,11 @@ public class Group implements QPBean {
 	 * @param start_dt The start date this group is valid from.
 	 */
 	public void setStart_dt(Date start_dt) {
-		this.start_dt = start_dt;
+		// Remove milliseconds from dates as they cause comparison problems between DB and JAVA
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(start_dt);
+		calendar.set(Calendar.MILLISECOND, 0);
+		this.start_dt = calendar.getTime();
 	}
 
 	/**
@@ -514,7 +537,11 @@ public class Group implements QPBean {
 	 * @param expiry_dt Date that this group will expire.
 	 */
 	public void setExpiry_dt(Date expiry_dt) {
-		this.expiry_dt = expiry_dt;
+		// Remove milliseconds from dates as they cause comparison problems between DB and JAVA
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(expiry_dt);
+		calendar.set(Calendar.MILLISECOND, 0);
+		this.expiry_dt = calendar.getTime();
 	}
 
 	/**
@@ -529,7 +556,11 @@ public class Group implements QPBean {
 	 * @param insert_dt The date this group was inserted into the database.
 	 */
 	public void setInsert_dt(Date insert_dt) {
-		this.insert_dt = insert_dt;
+		// Remove milliseconds from dates as they cause comparison problems between DB and JAVA
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(insert_dt);
+		calendar.set(Calendar.MILLISECOND, 0);
+		this.insert_dt = calendar.getTime();
 	}
 
 	/**
@@ -559,7 +590,11 @@ public class Group implements QPBean {
 	 * @param modify_dt The last time this group was modified.
 	 */
 	public void setModify_dt(Date modify_dt) {
-		this.modify_dt = modify_dt;
+		// Remove milliseconds from dates as they cause comparison problems between DB and JAVA
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(modify_dt);
+		calendar.set(Calendar.MILLISECOND, 0);
+		this.modify_dt = calendar.getTime();
 	}
 
 	/**

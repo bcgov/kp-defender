@@ -25,6 +25,12 @@ public class MyRoles {
 	 * Guest account that others can access to update and retrieve there own password and 
 	 * 	account information.
 	 */
-	public static final String QP_SECURITY_GUEST = "security.guest";
+	public static final String QP_SECURITY_GROUP_ADMIN = "security.group.admin";
+	
+	/**
+	 * User account that can only update their own credential information.
+	 */
+	public static final String QP_SECURITY_USER = "security.user";
+	
 	
 }

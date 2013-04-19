@@ -13,16 +13,16 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
-import gov.ca.bc.qp.QPDefender.beans.ProductAccess;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
 import gov.ca.bc.qp.QPDefender.beans.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
@@ -35,7 +35,6 @@ import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
  */
 public class DAOGroup extends DAOSecurity {
 
-	
 	/**
 	 * Looks up a group based on a unique identifier.
 	 * @param groupId Unique identifier for a group.
@@ -65,8 +64,84 @@ public class DAOGroup extends DAOSecurity {
 			throw new DAOException(e);
 		} catch (UnknownCredentialException e) {
 			throw new DAOException(e);
-		}		
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+			try { rs.close(); } catch(Exception ignore) {}
+		}
 		return group;
+	}
+	
+	public int addGroup(Group group) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		int id = -1;
+		try {
+			// Ok, we'll add our group.
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{? = call AddGroup(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
+			stmt.setBoolean(2, group.isActive());
+			stmt.setInt(3, group.getCustType());
+			stmt.setString(4, group.getCompany_ministry());
+			stmt.setString(5, group.getDept_branch());
+			stmt.setString(6, group.getAddr1());
+			stmt.setString(7, group.getAddr2());
+			stmt.setString(8, group.getCity());
+			stmt.setString(9, group.getProv());
+			stmt.setString(10, group.getCountry());
+			stmt.setString(11, group.getPcode());
+			stmt.setString(12, group.getPhone());
+			stmt.setString(13, group.getFax());
+			stmt.setString(14, group.getEmail());
+			stmt.setString(15, group.getContact_name());
+			stmt.setString(16, group.getContact_phone());
+			stmt.setString(17, group.getContact_email());
+			stmt.setTimestamp(18, new Timestamp(group.getStart_dt().getTime()));
+			stmt.setTimestamp(19, new Timestamp(group.getExpiry_dt().getTime()));
+			stmt.setTimestamp(20, new Timestamp(group.getInsert_dt().getTime()));
+			stmt.setInt(21, group.getInsert_user().getId());
+			stmt.setTimestamp(22, new Timestamp(group.getModify_dt().getTime()));
+			stmt.setInt(23, group.getModify_user().getId());
+			stmt.setString(24, group.getCust_note());
+			stmt.setString(25, group.getS_package());
+			stmt.setBoolean(26, group.isAuto_expire());
+			stmt.setInt(27, group.getDaysleft());
+			stmt.setString(28, group.getOrganisation_type());
+			stmt.setString(29, group.getContact_fax());
+			stmt.setString(30, group.getSap_order());
+			stmt.setString(31, group.getSap_customer());
+			
+			stmt.execute();
+			
+			id = stmt.getInt(1);
+			
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+		}
+		return id;
+	}
+	
+	public void deleteGroup(int groupId) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+
+		try {
+			// Next we'll lookup the group infomation.
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{call DeleteGroupById(" + Integer.toString(groupId) + ")}");
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+		}
 	}
 	
 	/**
@@ -112,9 +187,9 @@ public class DAOGroup extends DAOSecurity {
 				rs.getString("prov"), rs.getString("country"), rs.getString("pcode"),
 				rs.getString("phone"), rs.getString("fax"), rs.getString("email"), 
 				rs.getString("contact_name"), rs.getString("contact_phone"),
-				rs.getString("contact_email"), rs.getDate("start_dt"),
-				rs.getDate("expiry_dt"), rs.getDate("insert_dt"),
-				insertUser, rs.getDate("modify_dt"), modifyUser, rs.getString("cust_note"),
+				rs.getString("contact_email"), rs.getTimestamp("start_dt"),
+				rs.getTimestamp("expiry_dt"), rs.getTimestamp("insert_dt"),
+				insertUser, rs.getTimestamp("modify_dt"), modifyUser, rs.getString("cust_note"),
 				rs.getString("package"), rs.getBoolean("auto_expire"), 
 				rs.getInt("daysleft"), rs.getString("organisation_type"),
 				rs.getString("contact_fax"), rs.getString("sap_order"),

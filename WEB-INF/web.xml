@@ -52,6 +52,9 @@
     <role-name>qpadmin</role-name>
   </security-role>
   <security-role>
-    <role-name>qpsecurity.guest</role-name>
+    <role-name>security.group.admin</role-name>
+  </security-role>
+   <security-role>
+    <role-name>security.user</role-name>
   </security-role>
 </web-app>

@@ -2,11 +2,32 @@ package gov.ca.bc.qp.QPDefender.utility;
 
 import gov.ca.bc.qp.qpcommon.code.QPBean;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class ObjectUtil {
 
+	static Logger log = Logger.getLogger(ObjectUtil.class);
+	private static Date emptyDate = null;
+	
+	public static Date getEmptyDate() {
+		if(emptyDate == null) {
+			 try {
+				emptyDate = (new SimpleDateFormat("dd/MM/yyyy")).parse("05/11/1900");
+			} catch (ParseException e) {
+				// This should never happen, log it just in case.
+				log.error("Error parsing our empty date", e);
+			}
+		}
+		return emptyDate;
+	}
+	
+	
+	
 	public static boolean equal(String arg1, String arg2) {
 		boolean equal = false;
 		if(arg1 == null && arg2 == null)
