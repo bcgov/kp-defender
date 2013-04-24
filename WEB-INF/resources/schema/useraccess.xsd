@@ -8,6 +8,7 @@
 
 	<xsd:complexType name="useraccess_type">
 		<xsd:sequence>
+			<xsd:element name="userCredentialId" type="xsd:integer"/>
 			<xsd:element name="credential" type="xsd:string"/>
 			<xsd:element name="credentialType" type="xsd:string"/>
 			<xsd:element name="productAccess" type="productAccessType" maxOccurs="unbounded" minOccurs="0"/>

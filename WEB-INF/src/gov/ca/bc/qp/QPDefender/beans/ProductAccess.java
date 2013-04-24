@@ -3,13 +3,21 @@ package gov.ca.bc.qp.QPDefender.beans;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.authenticate.Role;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
 
+@XmlRootElement(name="productAccess")
+@XmlType(name="", propOrder={"userProductsID", "userid", "timeout", "active", "product", "roles"})
 public class ProductAccess implements QPBean {
 
 	// private member variables.
+	private int userProductsID = -1;
 	private int userid = -1;
 	private Product product = new Product();
 	private List<Role> roles = new ArrayList<Role>() {
@@ -27,13 +35,15 @@ public class ProductAccess implements QPBean {
 	
 	/**
 	 * Creating full instance of a product access object.
+	 * @Param userProductsID unique identifier for this user's product and role constraint.
 	 * @param userid Unique identifier for the a user.
 	 * @param product A product that the user has access to.
 	 * @param roles The roles the user belongs to for this product.
 	 * @param timeout The amount of minutes of innactivity before the user is automatically logged out.
 	 * @param active Whether the user is in an active state for this product.
 	 */
-	public ProductAccess(int userid, Product product, List<Role> roles, int timeout, boolean active) {
+	public ProductAccess(int userProductsID, int userid, Product product, List<Role> roles, int timeout, boolean active) {
+		this.setUserProductsID(userProductsID);
 		this.setUserid(userid);
 		this.setProduct(product);
 		this.setRoles(roles);
@@ -41,11 +51,24 @@ public class ProductAccess implements QPBean {
 		this.setActive(active);
 	}
 	
+	/**
+	 * @return unique identifier for this user's product and role constraint.
+	 */
+	@XmlElement(name="userProductsID")
+	public int getUserProductsID() {
+		return this.userProductsID;
+	}
 	
-	
+	/**
+	 * @param userProductsID unique identifier for this user's product and role constraint.
+	 */
+	public void setUserProductsID(int userProductsID) {
+		this.userProductsID = userProductsID;
+	}
 	/**
 	 * @return Unique identifier for a user.
 	 */
+	@XmlElement(name="userid")
 	public int getUserid() {
 		return userid;
 	}
@@ -58,6 +81,7 @@ public class ProductAccess implements QPBean {
 	/**
 	 * @return A product that this userid has access to.
 	 */
+	@XmlElement(name="product")
 	public Product getProduct() {
 		return product;
 	}
@@ -70,11 +94,13 @@ public class ProductAccess implements QPBean {
 	/**
 	 * @return The roles that this user has for this product.
 	 */
+	@XmlElementWrapper(name="roles")
+	@XmlElement(name="role")
 	public List<Role> getRoles() {
 		return roles;
 	}
 	/**
-	 * @param roles The roles that this user has for this product.
+	 * @param roles The roles 0that this user has for this product.
 	 */
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
@@ -82,6 +108,7 @@ public class ProductAccess implements QPBean {
 	/**
 	 * @return The time in minutes before this user is denied access to this product.
 	 */
+	@XmlElement(name="timeout")
 	public int getTimeout() {
 		return timeout;
 	}
@@ -94,6 +121,7 @@ public class ProductAccess implements QPBean {
 	/**
 	 * @return Whether this userid access to this product is in an active state.
 	 */
+	@XmlElement(name="active")
 	public boolean isActive() {
 		return active;
 	}

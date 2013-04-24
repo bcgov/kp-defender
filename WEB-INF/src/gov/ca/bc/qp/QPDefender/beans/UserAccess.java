@@ -15,11 +15,17 @@ import gov.ca.bc.qp.qpcommon.code.QPBean;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * A class for compiling access information for Users.
  * @author spencer.tickner
  *
  */
+@XmlRootElement(name="useraccess")
+@XmlType(name="", propOrder={"userCredentialId", "credential", "credential2", "credentialType", "productAccess", "user"})
 public class UserAccess implements QPBean {
 
 	// Private member variables.
@@ -29,6 +35,7 @@ public class UserAccess implements QPBean {
 			add(new ProductAccess());
 		}
 	};
+	private int userCredentialId = -1;
 	private String credentialType = "";
 	private String credential = "";
 	private String credential2 = "";
@@ -42,14 +49,16 @@ public class UserAccess implements QPBean {
 	 * Default Constructor for creating a full UserAccess Bean.
 	 * @param user The user associated with this access.
 	 * @param productAccess	The products that this user has access to.
+	 * @param userCredentialId  Unique identifier for these credentials.
 	 * @param credentialType The way this user accesses the products.
 	 * @param credential Can be a password, or IP address.
 	 * @param credential2 A subnet mask when applicable.
 	 */
-	public UserAccess(User user, List<ProductAccess> productAccess, String credentialType,
-			String credential, String credential2) {
+	public UserAccess(User user, List<ProductAccess> productAccess, int userCredentialId,
+			String credentialType, String credential, String credential2) {
 		this.setUser(user);
 		this.setProductAccess(productAccess);
+		this.setUserCredentialId(userCredentialId);
 		this.setCredentialType(credentialType);
 		this.setCredential(credential);
 		this.setCredential2(credential2);
@@ -58,6 +67,7 @@ public class UserAccess implements QPBean {
 	/**
 	 * @return The user associated with this access.
 	 */
+	@XmlElement(name="user")
 	public User getUser() {
 		return user;
 	}
@@ -72,6 +82,7 @@ public class UserAccess implements QPBean {
 	/**
 	 * @return The products that this user has access to.
 	 */
+	@XmlElement(name="productAccess")
 	public List<ProductAccess> getProductAccess() {
 		return productAccess;
 	}
@@ -84,8 +95,24 @@ public class UserAccess implements QPBean {
 	}
 
 	/**
+	 * @return Unique identifier for these credentials.
+	 */
+	@XmlElement(name="userCredentialId")
+	public int getUserCredentialId() {
+		return this.userCredentialId;
+	}
+	
+	/**
+	 * @param userCredentialId Unique identifier for these credentials.
+	 */
+	public void setUserCredentialId(int userCredentialId) {
+		this.userCredentialId = userCredentialId;
+	}
+	
+	/**
 	 * @return The way this user accesses the products.
 	 */
+	@XmlElement(name="credentialType")
 	public String getCredentialType() {
 		return credentialType;
 	}
@@ -100,6 +127,7 @@ public class UserAccess implements QPBean {
 	/**
 	 * @return Can be a password, or IP address.
 	 */
+	@XmlElement(name="credential")
 	public String getCredential() {
 		return credential;
 	}
@@ -114,6 +142,7 @@ public class UserAccess implements QPBean {
 	/**
 	 * @return A subnet mask when applicable.
 	 */
+	@XmlElement(name="credential2")
 	public String getCredential2() {
 		return credential2;
 	}

@@ -11,7 +11,9 @@ import gov.ca.bc.qp.QPDefender.DAO.DAOGroupProduct;
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.QPDefender.config.MyResolver;
+import gov.ca.bc.qp.QPDefender.test.Utility;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.code.QPBean;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.dom.QPSchemaValidator;
 import gov.ca.bc.qp.qpcommon.dom.ValidationException;
@@ -32,6 +34,7 @@ public class WebGroupTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUti
 		Document doc = (Document)web.getGroup(Integer.toString(groupid)).getEntity();
 		try {
 			QPSchemaValidator validator = QPSchemaValidator.getInstance(this.getClass().getResource("/schema/group.xsd"));
+			
 			Assert.assertTrue(validator.validate(doc));
 		} catch (ValidationException e) {
 			e.printStackTrace();
@@ -48,8 +51,12 @@ public class WebGroupTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUti
 		Document doc = (Document)web.getMyGroup().getEntity();
 		QPMarshaller marshaller = new QPMarshaller();
 		try {
-			Group g = (Group) marshaller.unmarshal(doc, new Group());
-			Assert.assertNotNull(g);
+			Group group = new Group();
+			QPBean bean = marshaller.unmarshal(doc, group);
+			
+			Assert.assertTrue(bean instanceof Group);
+			group = (Group)bean;
+			Assert.assertNotNull(group);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			Assert.fail();

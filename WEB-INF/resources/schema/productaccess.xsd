@@ -8,11 +8,12 @@
 
 	<xsd:complexType name="productAccessType">
 		<xsd:sequence>
+			<xsd:element name="userProductsID" type="xsd:integer"/>
+			<xsd:element name="userid" type="xsd:integer"/>
+			<xsd:element name="timeout" type="xsd:integer"/>
 			<xsd:element name="active" type="xsd:boolean"/>
 			<xsd:element name="product" type="productType"/>
-			<xsd:element name="roles" type="rolesType" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="timeout" type="xsd:integer"/>
-			<xsd:element name="userid" type="xsd:integer"/>
+			<xsd:element ref="roles"/>
 		</xsd:sequence>
 	</xsd:complexType>
 </xsd:schema>
