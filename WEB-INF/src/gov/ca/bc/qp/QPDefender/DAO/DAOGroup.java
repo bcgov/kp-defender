@@ -35,6 +35,18 @@ import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
  */
 public class DAOGroup extends DAOSecurity {
 
+	public void AddProductToGroup(GroupProduct groupProduct) {
+		Connection con = null;
+		CallableStatement stmt = null;
+		
+		con = this.getConnectionPool().getConnection();
+		stmt = con.prepareCall("{call UpdateAddProductToGroup(?,?,?,?,?)}");
+		stmt.setInt(1, groupProduct.getId());
+		stmt.setInt(2, groupProduct.getGroupid());
+		stmt.setInt(3, groupProduct.getProduct().getId());
+		stmt.setInt(4, groupProduct.getExpiryDate());
+		
+	}
 	/**
 	 * Looks up a group based on a unique identifier.
 	 * @param groupId Unique identifier for a group.

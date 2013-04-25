@@ -9,7 +9,6 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
-import java.net.URL;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
