@@ -9,6 +9,7 @@
  */
 package gov.ca.bc.qp.QPDefender.beans;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -120,6 +121,10 @@ public class GroupProduct implements QPBean {
 	 * @param expiryDate The date that this product with expire for this group.
 	 */
 	private void setExpiryDate(Date expiryDate) {
+		// Remove milliseconds from dates as they cause comparison problems between DB and JAVA
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(expiryDate);
+		calendar.set(Calendar.MILLISECOND, 0);
 		this.expiryDate = expiryDate;
 	}
 

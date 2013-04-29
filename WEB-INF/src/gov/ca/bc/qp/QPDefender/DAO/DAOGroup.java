@@ -35,17 +35,28 @@ import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
  */
 public class DAOGroup extends DAOSecurity {
 
-	public void AddProductToGroup(GroupProduct groupProduct) {
+	/**
+	 * 
+	 * @param groupProduct
+	 * @throws DAOException
+	 */
+	public void AddProductToGroup(GroupProduct groupProduct) throws DAOException {
 		Connection con = null;
 		CallableStatement stmt = null;
-		
-		con = this.getConnectionPool().getConnection();
-		stmt = con.prepareCall("{call UpdateAddProductToGroup(?,?,?,?,?)}");
-		stmt.setInt(1, groupProduct.getId());
-		stmt.setInt(2, groupProduct.getGroupid());
-		stmt.setInt(3, groupProduct.getProduct().getId());
-		stmt.setInt(4, groupProduct.getExpiryDate());
-		
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call UpdateAddProductToGroup(?,?,?,?,?)}");
+			stmt.setInt(1, groupProduct.getId());
+			stmt.setInt(2, groupProduct.getGroupid());
+			stmt.setInt(3, groupProduct.getProduct().getId());
+			stmt.setTimestamp(4, new Timestamp(groupProduct.getExpiryDate().getTime()));
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}			
+		}
 	}
 	/**
 	 * Looks up a group based on a unique identifier.
