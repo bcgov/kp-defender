@@ -29,7 +29,7 @@ public class QPDefenderXSLTResolverTest {
 	public void testQPDefenderXSLTResolverNoParams() {
 		String unresolvedPath = "test";
 		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), 1, 1);
-		MyResolver resolver = new MyResolver(unresolvedPath, principal);
+		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
 
 		// Ensure our xslt is resolving
 		File f = this.getFile(resolver.getURL());
@@ -46,7 +46,7 @@ public class QPDefenderXSLTResolverTest {
 	public void testQPDefenderXSLTResolverWithParams() {
 		String unresolvedPath = "test/param1=value1/param2=value2";
 		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), 1, 1);
-		MyResolver resolver = new MyResolver(unresolvedPath, principal);
+		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
 
 		// Ensure our xslt is resolving
 		File f = this.getFile(resolver.getURL());

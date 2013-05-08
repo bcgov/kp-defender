@@ -12,6 +12,7 @@ package gov.ca.bc.qp.QPDefender.web;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,10 +20,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -50,6 +53,8 @@ public class WebProduct {
 
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;
+	@Context private HttpHeaders header;
+	@Context private UriInfo uriInfo;
 	
 	/**
 	 * Helper method for ensuring we don't get null pointers if running outside a 
@@ -97,7 +102,7 @@ public class WebProduct {
 			Document document = marshaller.marshalToDomWrapped(products, "products");
 			// Transform our xsl
 			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal());
+				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				document = trans.transform(document, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
@@ -153,7 +158,7 @@ public class WebProduct {
 				doc = marshaller.marshalToDom(product);
 				// Transform our xsl
 				if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-					MyResolver resolver = new MyResolver(xsl_global, this.getPrincipal());
+					MyResolver resolver = new MyResolver(xsl_global, this.getPrincipal(), this.uriInfo);
 					XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 					doc = trans.transform(doc, resolver.getParams());
 					type = MediaType.TEXT_HTML_TYPE;

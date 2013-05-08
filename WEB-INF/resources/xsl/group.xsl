@@ -1,11 +1,20 @@
-<?xml version='1.0'?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<?xml version="1.0"?>
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+	xmlns:fun="http://gov.ca.bc.qp.foodsafe/xsl/functions" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	exclude-result-prefixes="#all">
 
-<xsl:output media-type="xhtml" method="xhtml" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" 
-	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" encoding="utf-8" indent="yes"/>
+	<xsl:include href="header.xsl"/>
+	<xsl:include href="components.xsl"/>
 
-<xsl:template match="/">
-	<html xmlns="http://www.w3.org/1999/xhtml">
+	<xsl:output media-type="xhtml" method="xhtml" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" encoding="utf-8" indent="yes" omit-xml-declaration="yes"
+	            exclude-result-prefixes="#all"/>
+
+	<xsl:template match="/">
+		<html>
+
+			<xsl:sequence select="fun:printHeader('Add Group')"/>
+<!-- 
 	<head>
 		<title>Add Group</title>
 	    <script type="text/javascript" src="media/js/modernizr.min.js"></script>
@@ -14,25 +23,247 @@
 	    <script type="text/javascript" src="media/js/jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.min.js"></script>
 	    <link rel="stylesheet" href="media/js/jquery-ui-1.10.2.custom/css/ui-lightness/jquery-ui-1.10.2.custom.min.css" />
 	    <script type="text/javascript" src="media/js/fallback.js"></script>
-	</head>
-	<body>
-		<div class="group_information">
-			<form name="addGroup">
-				<xsl:apply-templates/>
-			</form>
-		</div>
-	</body>
-	</html>	
-</xsl:template>
+	</head>-->
+			<body>
+				<div class="group_information">
+					<xsl:choose>
+						<xsl:when test="group/id &gt; 0">
+							<h1>
+								<xsl:value-of select="group/dept_branch"/>
+							</h1>
+							<div class="auto_info">
+								<div class="CreatedBy">Created By: <xsl:value-of select="group/insert_user/username"/></div>
+								<div class="CreatedDate">Created On: <xsl:value-of select="group/insert_dt"/></div>
+								<div class="ModifiedBy">Modified By: <xsl:value-of select="group/modify_user/username"/></div>
+								<div class="ModifiedDate">Modified On: <xsl:value-of select="group/modify_dt"/></div>
+							</div>
+						</xsl:when>
+						<xsl:otherwise>
+							<h1>Add Group</h1>
+						</xsl:otherwise>
+					</xsl:choose>
+					<form name="addGroup">
+						<div class="form_container">
+							<xsl:apply-templates/>
+						</div>
+					</form>
+				</div>
+			</body>
+		</html>
+	</xsl:template>
 
-<xsl:template match="group">
-	<h1>Add Group</h1>
-	<div class="auto_info">
-		<div class="CreatedBy">Created By: Spencer Tickner</div>
-		<div class="CreatedDate">Created On: January 1, 2012</div>
-		<div class="ModifiedBy">Modified By: Amar Shiota</div>
-		<div class="ModifiedDate">Modified On: January 31, 2012</div>
-	</div>
+
+	<xsl:template match="group">
+		<div class="group_info">
+			<table border="0" cellspacing="0" cellpadding="3">
+				<tr>
+					<td class="company_ministy">Company/Ministry:</td>
+					<td class="company_ministy">
+						<xsl:sequence select="fun:textInput(company_ministry, true())"/>
+						<!--<input type="text" name="company_ministry" value="{company_ministry}"/>-->
+					</td>
+					<td class="addr1">
+						<label>Address Line 1:</label>
+					</td>
+					<td class="addr1">
+						<xsl:sequence select="fun:textInput(addr1, false())"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="organisation_type">Organisation Type:</td>
+					<td class="organisation_type">
+						<xsl:sequence select="fun:textInput(organisation_type, false())"/>
+					</td>
+					<td>Address Line 2:</td>
+					<td>
+						<span class="addr2">
+							<xsl:sequence select="fun:textInput(addr2, false())"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="dept_branch">Department/Branch:</td>
+					<td class="dept_branch">
+						<xsl:sequence select="fun:textInput(dept_branch, false())"/>
+					</td>
+					<td class="city">City:</td>
+					<td class="city">
+						<xsl:sequence select="fun:textInput(city, false())"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="s_package">
+						<label>Package:</label>
+					</td>
+					<td class="s_package">
+						<xsl:sequence select="fun:textInput(s_package, false())"/>
+					</td>
+					<td class="prov">Province:</td>
+					<td class="prov">
+						<xsl:sequence select="fun:textInput(prov, false())"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="phone">
+						<label>Phone:</label>
+					</td>
+					<td class="phone">
+						<input type="text" name="phone" value="{phone}" placeholder="(111) 111-1111"/>
+					</td>
+					<td class="country">Country:</td>
+					<td class="country">
+						<xsl:sequence select="fun:textInput(country, false())"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="fax">
+						<label>Fax:</label>
+					</td>
+					<td class="fax">
+						<input type="text" name="fax" value="{fax}" placeholder="(111) 111-1111"/>
+					</td>
+					<td class="pcode">Postal Code:</td>
+					<td class="pcode">
+						<input type="text" name="pcode" value="{pcode}" placeholder="X1X 1X1" pattern="[A-Z][0-9][A-Z] [0-9][A-Z][0-9]"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="email">
+						<label>Email:</label>
+					</td>
+					<td class="email">
+						<input type="email" name="email" value="{email}" placeholder="someone@something.com"/>
+					</td>
+					<td class="city">&#xA0;</td>
+					<td class="city">&#xA0;</td>
+				</tr>
+				<tr>
+					<td class="phone">&#xA0;</td>
+					<td class="phone">&#xA0;</td>
+					<td class="city">&#xA0;</td>
+					<td class="city">&#xA0;</td>
+				</tr>
+				<tr>
+					<td class="contact_name">
+						<label>Contact Name:</label>
+					</td>
+					<td class="contact_name">
+						<xsl:sequence select="fun:textInput(contact_name, false())"/>
+					</td>
+					<td class="contact_email">
+						<label>Contact Email:</label>
+					</td>
+					<td class="contact_email">
+						<xsl:sequence select="fun:textInput(contact_email, false())"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="contact_phone">
+						<label>Contact Phone:</label>
+					</td>
+					<td class="contact_phone">
+						<xsl:sequence select="fun:textInput(contact_phone, false())"/>
+					</td>
+					<td class="contact_fax">
+						<label>Contact Fax:</label>
+					</td>
+					<td class="contact_email">
+						<xsl:sequence select="fun:textInput(contact_fax, false())"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="access_info" xmlns="">
+			<table border="0" cellspacing="0" cellpadding="3">
+				<tr>
+					<td class="active">
+						<label>Active</label>
+					</td>
+					<td>
+						<input type="checkbox" checked="checked" name="active">
+							<xsl:if test="active = 'true'">
+								<xsl:attribute name="checked">checked</xsl:attribute>
+							</xsl:if>
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td class="custType">
+						<label>Customer Type</label>
+					</td>
+					<td>
+						<xsl:sequence select="fun:custType()"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="start_dt">
+						<label>Start Date</label>
+					</td>
+					<td>
+						<input type="date" name="start_dt"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="end_dt">
+						<label>End Date</label>
+					</td>
+					<td>
+						<input type="date" name="expiry_dt"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="auto_expire">
+						<label>Auto Expire</label>
+					</td>
+					<td>
+						<span class="auto_expire">
+							<input type="checkbox" name="auto_expire"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="daysleft">
+						<label>Days Left</label>
+					</td>
+					<td>
+						<span class="daysleft">
+							<input type="text" name="daysleft"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="sap_order">
+						<label>SAP Order Number:</label>
+					</td>
+					<td>
+						<span class="sap_order">
+							<input type="text" name="sap_order"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="sap_customer">
+						<label>SAP Customer:</label>
+					</td>
+					<td>
+						<span class="sap_customer">
+							<input type="text" name="sap_customer"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="cust_note">
+						<label>Customer Note:</label>
+					</td>
+					<td>
+						<textarea name="cust_note2" cols="20" rows="5"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<!--
 	<div class="group_info">
 		<div class="company_ministy"><label>Company/Ministry:</label> <input type="text" name="company_ministry"/></div>
 		<div class="organisation_type"><label>Organisation Type:</label> <input type="text" name="organisation_type"/></div>
@@ -112,34 +343,6 @@
 	</div>
 
 	<button type="submit" value="Submit"/>
-</xsl:template>
-
-</xsl:stylesheet><!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
-
-<metaInformation>
-	<scenarios>
-		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\..\..\..\..\..\..\test\input.xml" htmlbaseurl="" outputurl="file:///u:/Projects/Current/QPSecurity/group.html" processortype="saxon8" useresolver="yes"
-		          profilemode="0" profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""
-		          validateoutput="no" validator="internal" customvalidator="">
-			<advancedProp name="sInitialMode" value=""/>
-			<advancedProp name="bXsltOneIsOkay" value="true"/>
-			<advancedProp name="bSchemaAware" value="true"/>
-			<advancedProp name="bXml11" value="false"/>
-			<advancedProp name="iValidation" value="0"/>
-			<advancedProp name="bExtensions" value="true"/>
-			<advancedProp name="iWhitespace" value="0"/>
-			<advancedProp name="sInitialTemplate" value=""/>
-			<advancedProp name="bTinyTree" value="true"/>
-			<advancedProp name="bWarnings" value="true"/>
-			<advancedProp name="bUseDTD" value="false"/>
-			<advancedProp name="iErrorHandling" value="fatal"/>
-		</scenario>
-	</scenarios>
-	<MapperMetaTag>
-		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
-		<MapperBlockPosition></MapperBlockPosition>
-		<TemplateContext></TemplateContext>
-		<MapperFilter side="source"></MapperFilter>
-	</MapperMetaTag>
-</metaInformation>
--->
+	-->
+	</xsl:template>
+</xsl:stylesheet>

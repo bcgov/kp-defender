@@ -10,17 +10,28 @@
 package gov.ca.bc.qp.QPDefender.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
+import gov.ca.bc.qp.QPDefender.http.AuthProxy;
+import gov.ca.bc.qp.QPDefender.http.ProxyException;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 
@@ -45,6 +56,9 @@ public class MyResolver implements XSLTResolver {
 	private URL url = null;
 	private Source source = null;
 	private Map<String, String> params = null;
+	private UriInfo uriInfo = null;
+	private Principal principal = null;
+	//private HttpHeaders header = null;
 	
 	
 	/**
@@ -55,12 +69,15 @@ public class MyResolver implements XSLTResolver {
 	 * @param principal	By default the roles that the user belongs to are always passed to
 	 * 						the stylsheet. The principal allows us to get access to these roles.
 	 */
-	public MyResolver(String xsltPath, QPPrincipal principal) {
+	public MyResolver(String xsltPath, QPPrincipal principal, UriInfo uriInfo) {
 		// OK, expect path is "xsl/param1=value1/param2=value2", or without params
 		//	it would be "xsl", change the xsl into a URL and source, change the params into
 		//	a map of parameters. We are going to default to always adding the role of the user
 		//	to the params as well.
 		
+		this.principal = principal;
+		//this.header = header;
+		this.uriInfo = uriInfo;
 		
 		// If the xsltPath is our no transfomation keyword don't go to the trouble
 		if(xsltPath.equals(MyResolver.NO_TRANSFORM)) {
@@ -175,6 +192,39 @@ public class MyResolver implements XSLTResolver {
 			sb.delete(sb.length()-1,  sb.length());
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public Source resolve(String href, String base) throws TransformerException {
+		Source source = null;
+		if(href.startsWith("/")) {
+			URI uri = this.uriInfo.getBaseUri().resolve(href);
+			try {
+				source = AuthProxy.getSource(uri, principal);
+			} catch (ProxyException e1) {
+				throw new TransformerException(e1);
+			}
+			/*
+			InputStream is;
+			try {
+				is = uri.toURL().openStream();
+				System.out.println(uri);
+			} catch (MalformedURLException e) {
+				throw new TransformerException(e);
+			} catch (IOException e) {
+				throw new TransformerException(e);
+			}
+			source = new StreamSource(is);
+			*/
+			/*
+			StringBuffer path = new StringBuffer(base);
+			File file = new File(path.append(href).toString());
+			if(file.exists()) source = new StreamSource(file);
+			*/
+		} else {
+			source = new StreamSource(this.getClass().getResourceAsStream(href));
+		}
+		return source;
 	}
 
 }

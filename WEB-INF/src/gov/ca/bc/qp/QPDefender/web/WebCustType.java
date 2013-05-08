@@ -19,12 +19,17 @@ import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
+import javax.annotation.security.PermitAll;
+import javax.servlet.ServletContext;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -43,6 +48,9 @@ public class WebCustType {
 	
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;
+	@Context private HttpHeaders header;
+	@Context private UriInfo uriInfo;
+	
 	
 	/**
 	 * Helper method for ensuring we don't get null pointers if running outside a 
@@ -63,6 +71,9 @@ public class WebCustType {
 	 * Looks up all the customer types within the data source.
 	 * @return A wrapped list of customer types.
 	 */
+	@GET
+	@Path("all")
+	@PermitAll
 	public Response getCustTypes() {
 		Response response = null;
 		Document doc = null;
@@ -73,7 +84,7 @@ public class WebCustType {
 			QPMarshaller marshaller = new QPMarshaller();
 			doc = marshaller.marshalToDomWrapped(custType, "types");
 			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal());
+				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), uriInfo);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;

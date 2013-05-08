@@ -12,7 +12,6 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.beans.Group;
@@ -29,6 +28,7 @@ import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,10 +36,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -61,6 +63,8 @@ public class WebGroup {
 	
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;
+	@Context private HttpHeaders header;
+	@Context private UriInfo uriInfo;
 	
 	// Get our xslt path for transformations.
 	@PathParam("xsl") public String xsl_global;
@@ -95,7 +99,7 @@ public class WebGroup {
 			Document doc = marshaller.marshalToDom(group);
 			MediaType type = MediaType.TEXT_XML_TYPE;
 			if(!xsl_global.equalsIgnoreCase(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal());
+				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
@@ -219,7 +223,7 @@ public class WebGroup {
 			MediaType type = MediaType.TEXT_XML_TYPE;
 			// If we have a transformer set, resolve to HTML.
 			if(!xsl_global.equalsIgnoreCase(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal());
+				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;

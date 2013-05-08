@@ -17,6 +17,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class DAOCustType extends DAOSecurity  {
 	 * @throws DAOException An error occurred when accessing our datasource.
 	 */
 	public List<CustType> getAllCustType() throws DAOException {
-		List<CustType> types = null;
+		List<CustType> types = new ArrayList<CustType>();
 		Connection con = null;
 		CallableStatement stmt = null;
 		ResultSet rs = null;
@@ -41,6 +42,7 @@ public class DAOCustType extends DAOSecurity  {
 			rs = stmt.executeQuery();
 			while(rs.next()) {
 				CustType c = new CustType(rs.getInt("ID"), rs.getString("Cust_Type"), rs.getString("Description"));
+				types.add(c);
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
