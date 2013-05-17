@@ -57,4 +57,12 @@
    <security-role>
     <role-name>security.user</role-name>
   </security-role>
+  
+  	<!-- This listener class picks up log4j output. See log4j.properties file for appender information -->
+	<!-- logger can be called by any class  -->
+	<listener>
+		<listener-class>
+			gov.ca.bc.qp.QPDefender.web.ApplicationServletContextListener
+		</listener-class>
+	</listener>
 </web-app>

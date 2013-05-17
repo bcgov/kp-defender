@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <xsl:stylesheet version="2.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:fun="http://gov.ca.bc.qp.foodsafe/xsl/functions"
+	xmlns:fun="http://gov.ca.bc.qp.qpdefender/xsl/functions"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all">
 
 	<xsl:function name="fun:printHeader">
@@ -17,8 +17,5 @@
 		    <script type="text/javascript" src="/QPDefender/app/none/resources/media/js/fallback.js"></script>
 		</head>
 	</xsl:function>
-
-
 	
-
 </xsl:stylesheet>

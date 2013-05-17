@@ -95,6 +95,52 @@ public class DAOGroup extends DAOSecurity {
 		return group;
 	}
 	
+	public void updateGroup(Group group) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		try {
+			// Ok, we'll add our group.
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{call UpdateGroup(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			stmt.setInt(1, group.getId());
+			stmt.setBoolean(2, group.isActive());
+			stmt.setInt(3, group.getCustType());
+			stmt.setString(4, group.getCompany_ministry());
+			stmt.setString(5, group.getDept_branch());
+			stmt.setString(6, group.getAddr1());
+			stmt.setString(7, group.getAddr2());
+			stmt.setString(8, group.getCity());
+			stmt.setString(9, group.getProv());
+			stmt.setString(10, group.getCountry());
+			stmt.setString(11, group.getPcode());
+			stmt.setString(12, group.getPhone());
+			stmt.setString(13, group.getFax());
+			stmt.setString(14, group.getEmail());
+			stmt.setString(15, group.getContact_name());
+			stmt.setString(16, group.getContact_phone());
+			stmt.setString(17, group.getContact_email());
+			stmt.setTimestamp(18, new Timestamp(group.getStart_dt().getTime()));
+			stmt.setTimestamp(19, new Timestamp(group.getExpiry_dt().getTime()));
+			stmt.setTimestamp(20, new Timestamp(group.getModify_dt().getTime()));
+			stmt.setInt(21, group.getModify_user().getId());
+			stmt.setString(22, group.getCust_note());
+			stmt.setString(23, group.getS_package());
+			stmt.setBoolean(24, group.isAuto_expire());
+			stmt.setInt(25, group.getDaysleft());
+			stmt.setString(26, group.getOrganisation_type());
+			stmt.setString(27, group.getContact_fax());
+			stmt.setString(28, group.getSap_order());
+			stmt.setString(29, group.getSap_customer());
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}			
+		}
+	}
+	
 	public int addGroup(Group group) throws DAOException {
 		Connection con = null;
 		CallableStatement stmt = null;

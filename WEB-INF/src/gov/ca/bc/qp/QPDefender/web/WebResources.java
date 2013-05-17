@@ -53,11 +53,11 @@ public class WebResources {
 	
 	
 	@GET
-	@Path("/media/{path}")
+	@Path("/media/{path:.+}")
 	public Response getResource(@PathParam("path") String path) {
 		Response response = null;
 		MediaType type = QPMediaType.getMediaTypeFromPath(path);
-		path = "/resources/media/" + path;
+		path = "/media/" + path;
 		InputStream resource = this.getClass().getResourceAsStream(path);
 			// Transform our xsl
 		if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML_TYPE) {
@@ -66,8 +66,8 @@ public class WebResources {
 			try {
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				document = trans.transfom(new StreamSource(resource), resolver.getParams());
-				type = MediaType.TEXT_HTML_TYPE;
-				response = Response.ok().entity(document).type(MediaType.TEXT_HTML).build();
+				//type = MediaType.TEXT_HTML_TYPE;
+				response = Response.ok().entity(document).build();
 			} catch (TransformerException e) {
 				log.error("Error while transforming resource", e);
 				response = Response.serverError().build();
@@ -76,7 +76,7 @@ public class WebResources {
 				response = Response.serverError().build();
 			}
 		} else {
-			response = Response.ok().entity(resource).type(type).build();
+			response = Response.ok().entity(resource).build();
 		}
 		return response;
 	}

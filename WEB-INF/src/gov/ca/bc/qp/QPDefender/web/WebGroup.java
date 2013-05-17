@@ -10,6 +10,12 @@
 package gov.ca.bc.qp.QPDefender.web;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -19,16 +25,20 @@ import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.QPDefender.beans.UserAccess;
 import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -82,6 +92,7 @@ public class WebGroup {
 		return principal;
 	}
 	
+	static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 	/**
 	 * Gets a group and it's associated access information.
 	 * @param id The unique identifier for this group.
@@ -125,9 +136,11 @@ public class WebGroup {
 	 */
 	@POST
 	@Path("add")
-	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({MediaType.TEXT_HTML, MediaType.TEXT_XML})
 	@RolesAllowed({MyRoles.QP_ADMIN})
 	public Response addGroup(
+			@FormParam("id") String id,
 			@FormParam("active") String active,
 			@FormParam("custtype") String custtype,
 			@FormParam("company_ministry") String company_ministry,
@@ -144,8 +157,8 @@ public class WebGroup {
 			@FormParam("contact_name") String contact_name,
 			@FormParam("contact_phone") String contact_phone,
 			@FormParam("contact_email") String contact_email,
-			@FormParam("start_dt") Date start_dt,
-			@FormParam("expiry_dt") Date expiry_dt,
+			@FormParam("start_dt") String start_dt_s,
+			@FormParam("expiry_dt") String expiry_dt_s,
 			@FormParam("cust_note") String cust_no,
 			@FormParam("package") String s_package,
 			@FormParam("auto_expire") String auto_expire,
@@ -157,21 +170,90 @@ public class WebGroup {
 		Response response = null;
 		DAOUser daoUser = new DAOUser();
 		User user = null;
+		Date start_dt = null;
+		Date expiry_dt = null;
+		int iCustType = -1;
+		int iDaysLeft = -1;
+		int iID = -1;
+		
+		this.log.error("Group being added");
+		
+		// If the id is not an integer send server error, this should never happen.
 		try {
+			iID = Integer.parseInt(id);
+		} catch(NumberFormatException e) {
+			log.error("Invalid group identifier", e);
+			return Response.serverError().build();
+		}
+
+		
+		try {
+			// Convert our dates, if applicable
+			if(!(start_dt_s == null || start_dt_s.length()== 0))
+				start_dt = sdf.parse(start_dt_s);
+			else 
+				start_dt = ObjectUtil.getEmptyDate();
+			if(!(expiry_dt_s == null || expiry_dt_s.length()== 0))
+				expiry_dt = sdf.parse(expiry_dt_s);
+			else 
+				expiry_dt = ObjectUtil.getEmptyDate();
+			
+			// Convert integers if applicable
+			if(!(custtype == null || custtype.length() == 0))
+				iCustType = Integer.parseInt(custtype);
+			else 
+				iCustType = -1;
+			if(!(daysleft == null || daysleft.length() == 0))
+				iDaysLeft = Integer.parseInt(daysleft);
+			else 
+				iDaysLeft = -1;
+			
+			
+			
 			user = daoUser.lookupUserById(this.getPrincipal().getUserId());
-			Group group = new Group(-1, Boolean.parseBoolean(active), Integer.parseInt(custtype),
+			
+			// We set right now for insert and modify date. If we are updating the insert date and
+			//		insert user will simply be ignored.
+			Group group = new Group(iID, Boolean.parseBoolean(active), iCustType,
 					company_ministry, dept_branch, addr1, addr2, city, prov, country, pcode, phone,
 					fax, email, contact_name, contact_phone, contact_email, start_dt, 
 					expiry_dt, new Date(), user, new Date(), user, cust_no, s_package, 
-					Boolean.parseBoolean(auto_expire), Integer.parseInt(daysleft), 
+					Boolean.parseBoolean(auto_expire), iDaysLeft, 
 					organisation_type, contact_fax, sap_order, sap_customer, new ArrayList<UserAccess>(),
 					new ArrayList<GroupProduct>());
+			DAOGroup dao = new DAOGroup();
+			
+			// We'll add a update parameter to our xsl.
+			String xsl= this.xsl_global;
+			// If the id of this group is -1 it means we're adding a new group. If not we're updating.
+			if(iID == -1) {
+				iID = dao.addGroup(group);
+				// Add our addition feedback.
+				xsl = xsl + "/msg=" + URLEncoder.encode("Group Added", "UTF-8");
+			} else {
+				dao.updateGroup(group);
+				// Add our update feedback.
+				xsl = xsl + "/msg=" + URLEncoder.encode("Group Updated", "UTF-8");
+			}
+			
+			
+			// We are going to redirect to the new group that was created using the same xsl to render the content.
+			String url = "/QPDefender/app/" + xsl + "/groups/ID/" + Integer.toString(iID);
+			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
+			response = Response.seeOther(redirectURI).build();
+			//response = Response.ok().entity("Success").build();
 		} catch (ObjectNotFoundException e) {
 			log.warn("Error when adding a group, user not found", e);
 			response = Response.status(Status.NOT_FOUND).build();
 		} catch (DAOException e) {
 			log.error("Error while accessing the database while adding a group.", e);
 			response = Response.serverError().build();
+		} catch (ParseException e) {
+			log.warn("Invalid date format", e);
+			response = Response.status(Status.BAD_REQUEST).build();
+		} catch (UnsupportedEncodingException e) {
+			log.error("URI format is incorrect", e);
+			response = Response.status(Status.BAD_REQUEST).build();
 		}
 		
 		return response;
@@ -223,7 +305,7 @@ public class WebGroup {
 			MediaType type = MediaType.TEXT_XML_TYPE;
 			// If we have a transformer set, resolve to HTML.
 			if(!xsl_global.equalsIgnoreCase(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
+				XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), this.uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
