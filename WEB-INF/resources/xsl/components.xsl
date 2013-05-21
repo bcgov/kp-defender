@@ -6,7 +6,7 @@
 
 	<xsl:import href="common.xsl"/>
 	
-	<xsl:variable name="custTypeDoc" select="doc('/QPDefender/app/none/custtype/all')"/>
+	<!--<xsl:variable name="custTypeDoc" select="doc('/QPDefender/app/none/custtype/all')"/>-->
 
 	<!--  Function for creating text input boxes. If the value of the elem/text() is -1
 			it will be suppressed as this is a empty placeholder value within QPDefender. -->
@@ -30,7 +30,7 @@
 			</xsl:if>	
 		</input>
 	</xsl:function>
-
+<!--
 	<xsl:function name="fun:custType">
 		<xsl:param name="value"/>
 		<select name="custtype" required="required">
@@ -46,5 +46,16 @@
 		</select>
 
 	</xsl:function>
+-->
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
 
-</xsl:stylesheet>
+<metaInformation>
+	<scenarios/>
+	<MapperMetaTag>
+		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+		<MapperBlockPosition></MapperBlockPosition>
+		<TemplateContext></TemplateContext>
+		<MapperFilter side="source"></MapperFilter>
+	</MapperMetaTag>
+</metaInformation>
+-->

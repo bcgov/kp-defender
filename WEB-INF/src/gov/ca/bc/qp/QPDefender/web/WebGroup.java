@@ -307,11 +307,13 @@ public class WebGroup {
 			if(!xsl_global.equalsIgnoreCase(MyResolver.NO_TRANSFORM)) {
 				XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), this.uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
-				doc = trans.transform(doc, resolver.getParams());
+				
+				byte[] b = trans.transformToByteArray(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
+				response = Response.ok().entity(b).type(type).build();
+			} else {	
+				response = Response.ok().entity(doc).type(type).build();
 			}
-			
-			response = Response.ok().entity(doc).type(type).build();
 		} catch (NumberFormatException e) {
 			log.warn("Group id is not a integer", e);
 			response = Response.status(Status.BAD_REQUEST).build();

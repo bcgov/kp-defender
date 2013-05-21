@@ -10,14 +10,18 @@
 
 	<xsl:param name="roles" select="''"/>
 	<xsl:param name="msg" select="''"/>
-	
-	<xsl:output media-type="xhtml" method="xhtml" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" encoding="utf-8" indent="yes" omit-xml-declaration="yes"
-	            exclude-result-prefixes="#all"/>
+	<!-- 
+	<xsl:output media-type="html" method="html" 
+		doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" 
+		doctype-system="http://www.w3.org/TR/html4/loose.dtd" 
+		encoding="utf-8" indent="yes" omit-xml-declaration="yes"
+	    exclude-result-prefixes="#all"/> -->
+	    
+	<xsl:output method="html" doctype-system="about:legacy-compat" />
 	            
 
 	<xsl:template match="/">
 		<html>
-
 			<xsl:sequence select="fun:printHeader('Add Group')"/>
 			<body>
 				<div class="group_information">
@@ -190,7 +194,7 @@
 								<label>Customer Type</label>
 							</td>
 							<td>
-								<xsl:sequence select="fun:custType(custType)"/>
+								<!--<xsl:sequence select="fun:custType(custType)"/>-->
 							</td>
 						</tr>
 						<tr>
@@ -356,9 +360,9 @@
 
 <metaInformation>
 	<scenarios>
-		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\..\..\..\..\..\..\test\blah.xml" htmlbaseurl="" outputurl="" processortype="saxon8" useresolver="yes" profilemode="0" profiledepth="" profilelength=""
-		          urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal"
-		          customvalidator="">
+		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\..\..\..\..\..\..\test\group.xml" htmlbaseurl="" outputurl="..\..\..\..\..\..\..\test\output.html" processortype="saxon8" useresolver="yes" profilemode="0"
+		          profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no"
+		          validator="internal" customvalidator="">
 			<advancedProp name="sInitialMode" value=""/>
 			<advancedProp name="bXsltOneIsOkay" value="true"/>
 			<advancedProp name="bSchemaAware" value="true"/>
