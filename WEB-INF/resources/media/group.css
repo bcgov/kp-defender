@@ -1,6 +1,5 @@
 @charset "utf-8";
 /* CSS Document */
-
 .container {
 	width:1000px;
 	margin-left:auto;
@@ -12,7 +11,7 @@
 	padding: 10px;
 	width: 980px;
 	float:left;
-	background-color: #CCDFFD;
+	background-color: #069;
 	-moz-border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	-moz-border-top-right-radius: 5px;
@@ -25,7 +24,8 @@
 	border-left-style: solid;
 	border-top-color: #99C0FB;
 	border-right-color: #99C0FB;
-	border-left-color: #99C0FB;	
+	border-left-color: #99C0FB;
+	color: #FFF;
 }
 .user {
 	padding: 10px;
@@ -33,7 +33,7 @@
 	float: left;
 	width: 980px;
 	margin-top: 20px;
-	background-color: #CCDFFD;
+	background-color: #DAE9FE;
 	-moz-border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	-moz-border-top-right-radius: 5px;
@@ -66,10 +66,10 @@
 	float:left;
 }		
 .group_info {
-	width: 600px;
 	float:left;
 	clear:left;
 	padding: 0px;
+	width: 550px;
 }
 
 .group_info table td {
@@ -109,7 +109,11 @@ tr.controls td{
 	padding-top: 20px;
 }
 body {
-	background-color: #E2EDFE;
+	width:1000px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10pt
 }
 
 
@@ -145,12 +149,19 @@ input {
 h1 {
 	font-size:21px;
 	color: #069;
+	text-transform: uppercase;
 }
 .access_info {
-	float:left;
+	float:right;
 	clear:none;
-	margin-left:20px;
-	width:350px;
+	padding: 10px;
+	background-color: #DAE9FE;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #99C0FB;
+	width: 350px;
 }
 .access_info table td {
 	padding:5px;
@@ -163,12 +174,12 @@ h1 {
 	padding:0px;
 }
 .form_container {
-	width:980px;
+	width:960px;
 	float:left;
 	clear:left;
 	border: 1px solid #99C0FB;
-	margin-top: 5px;
-	padding: 10px;
+	margin-top: 0px;
+	padding: 20px;
 }
 .product {
 	padding: 10px;
@@ -176,7 +187,8 @@ h1 {
 	float: left;
 	width: 980px;
 	border: 1px solid #99C0FB;
-	margin-top: 5px;
+	margin-top: 0px;
+	margin-bottom: 5px;
 }
 .controlButtons a  {
 	color: #069;
