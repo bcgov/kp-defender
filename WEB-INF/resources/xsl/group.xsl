@@ -174,6 +174,32 @@
 							</td>
 						</tr>
 					</table>
+					<table width="539" border="0" class="productSpecs">
+					  <tr class="thead">
+					    <td>Product</td>
+					    <td>Concurrent </td>
+					    <td>Expirey</td>
+					    <td>Edit/Delete</td>
+					  </tr>
+					  <tr>
+					    <td>QP Legaleze</td>
+					    <td>3</td>
+					    <td>2014-01-01</td>
+					    <td>&#160;</td>
+					  </tr>
+					  <tr>
+					    <td>BC Codes</td>
+					    <td>5</td>
+					    <td>2014-01-01</td>
+					    <td>&#160;</td>
+					  </tr>
+					  <tr>
+					    <td><a href="#" onclick="addUser(this)"><img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /></a><a href="#"> Add Product</a></td>
+					    <td>&#160;</td>
+					    <td>&#160;</td>
+					    <td>&#160;</td>
+					  </tr>
+					</table>
 				</div>
 				<div class="access_info" xmlns="">
 					<table border="0" cellspacing="0" cellpadding="3">
