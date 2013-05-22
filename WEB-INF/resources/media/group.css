@@ -215,3 +215,16 @@ h1 {
 td.productname {
 	width: 200px;
 }
+table.productSpecs {
+	margin-top: 10px;
+}
+table.productSpecs td {
+	padding:5px;
+}
+tr.thead {
+	font-weight:bold;
+}.productSpecs tr td a {
+	font-weight: bold;
+	color: #0E76BC;
+	text-decoration: none;
+}	
