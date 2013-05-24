@@ -1,5 +1,15 @@
 package gov.ca.bc.qp.QPDefender.web;
 
+import java.net.URI;
+import java.util.List;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
+import gov.ca.bc.qp.QPDefender.DAO.DAOCredentialType;
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
+import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
+import gov.ca.bc.qp.QPDefender.beans.CredentialType;
+import gov.ca.bc.qp.QPDefender.beans.Group;
+import gov.ca.bc.qp.QPDefender.beans.UserAccess;
 import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
@@ -195,6 +205,88 @@ public class WebUser {
 		
 		return response;
 			
+	}
+	/**
+	 * Adds or updates a user and their associated credentials.
+	 * @param credid	The unique identifier for these credentials.
+	 * @param username	The username of the principal being updated or added.
+	 * @param email		Email address associated with this principal.
+	 * @param credType	The human readable type of credentials we're updating/adding.
+	 * @param credential May be a password or a single ip address to access resources.
+	 * @param credential2 If this is of a subnet type this would be the subnet part of the credential.
+	 * @param userid	Unique identifier for the user.
+	 * @param groupid	Unique identifier for the group.
+	 * @return a response representing the newly update group.
+	 */
+	@POST
+	@Path("credentials/add")
+	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
+	public Response addUserCredentials(
+			@FormParam("userCredentialId") String credid,
+			@FormParam("username") String username,
+			@FormParam("email") String email,
+			@FormParam("credentialType") String credTypeId,
+			@FormParam("credential") String credential,
+			@FormParam("credential") String credential2,
+			@FormParam("userid") String userid,
+			@FormParam("groupid") String groupid) {
+		
+		Response response = null;
+		int i_userid = -1;
+		int i_credid = -1;
+		int i_groupid = -1;
+		int i_credTypeId = -1;
+		
+		i_userid = Integer.parseInt(userid);
+		i_credid = Integer.parseInt(credid);
+		i_groupid = Integer.parseInt(groupid);
+		i_credTypeId = Integer.parseInt(credTypeId);
+
+		User user = new User(i_userid, i_groupid, username, email);
+		
+		DAOAccess dao = new DAOAccess();
+		try {
+			// We have to convert our credTypeId to actual type for our useraccess
+			DAOCredentialType daoCreds = new DAOCredentialType();
+			List<CredentialType> credTypes = daoCreds.getAllCredentialTypes();
+			String credType = "";
+			for(int i = 0; i < credTypes.size(); i++) {
+				if(credTypes.get(i).getId() == i_credTypeId)
+					credType = credTypes.get(i).getType();
+			}
+			// Create our user access bean to be added/updated.
+			UserAccess ua = new UserAccess(user, null, i_credid, credType, credential, credential2);
+			dao.AddUpdateUserAccess(ua);
+			// We are going to redirect to the new group that was created using the same xsl to render the content.
+			// 	but ensure that if the principal's group id is the same as the one being updated we return to me.
+			DAOGroup daoGroup = new DAOGroup();
+			Group group = daoGroup.lookupGroupByUserId(this.getPrincipal().getUserId());
+			String url = "/QPDefender/app/" + this.xsl_global + "/groups/";
+			// If the principal owns this group we will redirect them to "me", this is for roles where a group owner
+			//		may be able to add users to themselves, but not others. If it's a qpadmin they can add users to
+			//		everyone so we redirect to the id.
+			if(group.getId() == i_groupid) {
+				url = url + "me";
+			} else {
+				url = url + "ID/" + Integer.toString(i_groupid);
+			}
+			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
+			response = Response.seeOther(redirectURI).build();
+			
+		} catch (DAOException e) {
+			log.error("Error accessing the database when adding/updating credentials", e);
+			response = Response.serverError().build();
+		} catch (InvalidCharacterException e) {
+			log.error("Invalid character exception when adding/updating credentials", e);
+			response = Response.serverError().build();
+		} catch (ObjectNotFoundException e) {
+			log.error("No group found for user " + Integer.toString(this.getPrincipal().getUserId()), e);
+			response = Response.serverError().build();
+			
+		}
+		
+		return response;
+		
 	}
 	
 	

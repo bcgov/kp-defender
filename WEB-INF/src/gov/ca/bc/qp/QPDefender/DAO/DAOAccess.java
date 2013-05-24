@@ -40,6 +40,7 @@ public class DAOAccess extends DAOSecurity {
 		CallableStatement stmt = null;
 		try {
 			con = this.getConnectionPool().getConnection();
+			con.setAutoCommit(false);
 			stmt = con.prepareCall("{call UpdateAddUserAccess(?,?,?,?,?,?,?,?)}");
 			stmt.setInt(1, access.getUser().getId());
 			stmt.setInt(2, access.getUser().getGroupId());
@@ -50,13 +51,23 @@ public class DAOAccess extends DAOSecurity {
 			stmt.setString(7, access.getCredential());
 			stmt.setString(8, access.getCredential2());
 			stmt.execute();
-			this.AddUpdateProductAccess(access);
+			
+			if(access.getProductAccess() != null)
+				this.AddUpdateProductAccess(access);
+			
+			con.commit();
 		} catch (SQLException e) {
+			try { 
+				con.rollback(); 
+			} catch(Exception ex) {
+				log.error("Could not rollback AddUpdateUserAccess. " + access.getUserCredentialId(), ex);
+			}
 			throw new DAOException(e);
 		} finally {
 			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
 			try { stmt.close(); } catch(Exception ignore) {}
 		}
+		
 	}
 	
 	/**

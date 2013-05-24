@@ -214,6 +214,43 @@ public class DAOGroup extends DAOSecurity {
 	}
 	
 	/**
+	 * Looks up a group that a user belongs to.
+	 * @param userid unique identifier for a user.
+	 * @return	The group this user belongs to.
+	 * @throws DAOException Error occurred when accessing our data source.
+	 * @throws ObjectNotFoundException No group was found for this user.
+	 */
+	public Group lookupGroupByUserId(int userid) throws DAOException, ObjectNotFoundException {
+		Group group = null;
+		Connection con = null;
+		CallableStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Next we'll lookup the group infomation.
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{call LookupGroupByUserId(" + Integer.toString(userid) + ")}");
+			// Retrieve result set.
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				group = this.populateGroup(rs);
+			} else {
+				throw new ObjectNotFoundException("No Group with the userid " + Integer.toString(userid) + " was found");
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} catch (UnknownCredentialException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+			try { rs.close(); } catch(Exception ignore) {}
+		}
+		return group;
+	}
+	
+	/**
 	 * Helper method for populating a group object.
 	 * @param rs The result set that contains all the information on our group. The next() method must be called 
 	 * 				before passing it into this method.

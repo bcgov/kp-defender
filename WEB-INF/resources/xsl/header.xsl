@@ -7,7 +7,7 @@
 	<xsl:function name="fun:printHeader">
 		<xsl:param name="title" as="xsd:string"/>
 		<head>
-			<link href="/QPDefender/app/none/resources/media/group.css" rel="stylesheet" type="text/css"/>
+			
 			<title><xsl:value-of select="$title"/></title>
 			<script src="/QPDefender/app/none/resources/media/js/modernizr-1.5.min.js"></script>
 			<!-- Webforms2 -->
@@ -24,12 +24,15 @@
 			<script src="/QPDefender/app/none/resources/media/components/colorpicker/colorpicker.js"></script>
 			<!-- jQuery Placehol -->
 			<script src="/QPDefender/app/none/resources/media/components/placeholder/jquery.placehold-0.2.min.js"></script>
-		
-			<!-- Demo page layout -->
-			<!-- 
-			<link rel="stylesheet" href="/QPDefender/app/none/resources/media/css/html5forms.layout.css"/>
-			<script src="/QPDefender/app/none/resources/media/js/html5forms.js"></script>-->
 			<script src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
+			
+			<!--  Following is to enable lightbox functionality -->
+			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/prototype.js"/>
+			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/lightbox.js"/>
+			<link href="/QPDefender/app/none/resources/media/css/lightbox.css" rel="stylesheet" media="screen,projection" type="text/css"/>
+			
+			<!--  Finally our specific css overrides all others. -->
+			<link href="/QPDefender/app/none/resources/media/group.css" rel="stylesheet" type="text/css"/>
 		</head>
 	</xsl:function>
 	
