@@ -24,7 +24,7 @@ public class WebProductTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestU
 	public void testGetProducts() {
 		WebProduct product = new WebProduct();
 		// Suppress transformation
-		product.xsl_global = MyResolver.NO_TRANSFORM;
+		product.xsl = MyResolver.NO_TRANSFORM;
 		Response response = product.getProducts();
 		Document doc = (Document)response.getEntity();
 		URL xsd = WebProductTest.class.getResource("/schema/products.xsd");
@@ -41,7 +41,7 @@ public class WebProductTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestU
 	public void testGetProductById() {
 		WebProduct product = new WebProduct();
 		// Suppress transformation
-		product.xsl_global = MyResolver.NO_TRANSFORM;
+		product.xsl = MyResolver.NO_TRANSFORM;
 		Response response = product.getProductById("1");
 		Document doc = (Document)response.getEntity();
 		URL xsd = WebProductTest.class.getResource("/schema/product.xsd");
@@ -58,7 +58,7 @@ public class WebProductTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestU
 	public void testGetProductByIdWithTransform() {
 		WebProduct product = new WebProduct();
 		// create transformation
-		product.xsl_global = "test";
+		product.xsl = "test";
 		Response response = product.getProductById("1");
 		Document doc = (Document)response.getEntity();
 		Assert.assertEquals("success", doc.getChildNodes().item(0).getLocalName());

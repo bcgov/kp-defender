@@ -8,6 +8,7 @@
 	
 	<xsl:variable name="custTypeDoc" select="doc('/QPDefender/app/none/custtype/all')"/>
 	<xsl:variable name="credTypeDoc" select="doc('/QPDefender/app/none/credentialtype/all')"/>
+	<xsl:variable name="productTypeDoc" select="doc('/QPDefender/app/none/products/all')"/>
 
 	<!--  Function for creating text input boxes. If the value of the elem/text() is -1
 			it will be suppressed as this is a empty placeholder value within QPDefender. -->
@@ -88,4 +89,30 @@
 		</select>
 	</xsl:function>
 
-</xsl:stylesheet>
+	<xsl:function name="fun:productType">
+		<xsl:param name="id"/>
+		<select name="productType" required="true">
+			<option value="">Please Select</option>
+			<xsl:for-each select="$productTypeDoc/products/product">
+				<option value="{id}" defaultTimeout="{defaultTimeout}">
+					<xsl:if test="id = $id">
+						<xsl:attribute name="selected">selected</xsl:attribute>
+					</xsl:if>
+					<xsl:value-of select="productname"/>
+				</option>
+			</xsl:for-each>
+		</select>
+	</xsl:function>
+
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
+
+<metaInformation>
+	<scenarios/>
+	<MapperMetaTag>
+		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+		<MapperBlockPosition></MapperBlockPosition>
+		<TemplateContext></TemplateContext>
+		<MapperFilter side="source"></MapperFilter>
+	</MapperMetaTag>
+</metaInformation>
+-->

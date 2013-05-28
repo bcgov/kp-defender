@@ -9,6 +9,7 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.beans.CredentialType;
@@ -54,13 +55,17 @@ public abstract class WebInterface {
 			return null;
 		}};
 	
+	// This must be protected to implementing classes have access
+	protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		
 	// Grab our context to get our principal.
-	@Context private SecurityContext securityContext;
-	@Context private HttpHeaders header;
-	@Context private UriInfo uriInfo;
+	// TODO: Change these to private once we moved all interface classes to extending this class.
+	@Context protected SecurityContext securityContext;
+	@Context protected HttpHeaders header;
+	@Context protected UriInfo uriInfo;
 	
 	// Private member variable.
-	private QPPrincipal principal = null;
+	protected QPPrincipal principal = null;
 	
 	/**
 	 * @param principal The entity accessing this resource. This set method is a convenience method for

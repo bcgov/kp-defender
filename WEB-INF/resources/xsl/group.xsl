@@ -43,7 +43,10 @@
 							<xsl:apply-templates select="group"/>
 						</div>
 						<xsl:if test="group/id &gt; 0">
-							<div class="addProduct"> <a href="/QPDefender/app/useraccess/groupid={group/id}/useraccess/empty" class="lbOn"><img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a></div>
+							<div class="addProduct"> 
+								<a href="/QPDefender/app/useraccess/groupid={group/id}/useraccess/empty" class="lbOn">
+									<img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a>
+							</div>
 							<xsl:apply-templates select="group/users"/>
 						</xsl:if>
 					</div>
@@ -173,6 +176,11 @@
 							</td>
 						</tr>
 					</table>
+					<!-- If we are not adding a new group show the products this group has access to -->
+					<xsl:if test="number(/group/id) &gt; 0">
+						<xsl:apply-templates select="groupProducts"/>
+					</xsl:if>
+					<!-- 
 					<table width="539" border="0" class="productSpecs">
 					  <tr class="thead">
 					    <td>Product</td>
@@ -199,6 +207,7 @@
 					    <td>&#160;</td>
 					  </tr>
 					</table>
+					-->
 				</div>
 				<div class="access_info">
 					<table border="0" cellspacing="0" cellpadding="3">
@@ -303,6 +312,35 @@
 	<xsl:template match="users">
           <xsl:apply-templates select="useraccess"/>
 	</xsl:template>
+
+	<xsl:template match="groupProducts">
+		<table width="539" border="0" class="productSpecs">
+		  <tr class="thead">
+		    <td>Product</td>
+		    <td>Concurrent </td>
+		    <td>Expiry</td>
+		    <td>&#160;</td>
+		  </tr>	
+		  <xsl:apply-templates select="descendant::groupProduct"/>
+		  <tr>
+			<td align="right" colspan="4">
+				<a href="/QPDefender/app/groupproduct/groupid={/group/id}/groupproducts/empty" class="lbOn">Add Product</a>
+			</td>
+		  </tr>
+		</table>
+	</xsl:template>
+
+	<xsl:template match="groupProduct">
+		<tr>
+			<td><xsl:value-of select="product/productname"/></td>
+			<td><xsl:value-of select="concurrent"/></td>
+			<td><xsl:value-of select="fun:parseDate(expiryDate)"/></td>
+			<td>
+				<a href="/QPDefender/app/groupproduct/groupproducts/ID/{id}"  class="lbOn">Edit</a>
+				<a href="/QPDefender/app/groupproduct/group/delete/{id}">Delete</a>
+			</td>
+		</tr>
+	</xsl:template>
 	<!-- 
 	<xsl:template match="useraccess">
 		<tr>
@@ -316,4 +354,31 @@
 		</tr>
 	</xsl:template>
 	-->
-</xsl:stylesheet>
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
+
+<metaInformation>
+	<scenarios>
+		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\xml_test\group.xml" htmlbaseurl="" outputurl="" processortype="saxon8" useresolver="yes" profilemode="0" profiledepth="" profilelength="" urlprofilexml=""
+		          commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal" customvalidator="">
+			<advancedProp name="sInitialMode" value=""/>
+			<advancedProp name="bXsltOneIsOkay" value="true"/>
+			<advancedProp name="bSchemaAware" value="true"/>
+			<advancedProp name="bXml11" value="false"/>
+			<advancedProp name="iValidation" value="0"/>
+			<advancedProp name="bExtensions" value="true"/>
+			<advancedProp name="iWhitespace" value="0"/>
+			<advancedProp name="sInitialTemplate" value=""/>
+			<advancedProp name="bTinyTree" value="true"/>
+			<advancedProp name="bWarnings" value="true"/>
+			<advancedProp name="bUseDTD" value="false"/>
+			<advancedProp name="iErrorHandling" value="fatal"/>
+		</scenario>
+	</scenarios>
+	<MapperMetaTag>
+		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+		<MapperBlockPosition></MapperBlockPosition>
+		<TemplateContext></TemplateContext>
+		<MapperFilter side="source"></MapperFilter>
+	</MapperMetaTag>
+</metaInformation>
+-->

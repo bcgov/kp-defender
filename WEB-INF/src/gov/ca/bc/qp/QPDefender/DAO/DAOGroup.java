@@ -49,7 +49,8 @@ public class DAOGroup extends DAOSecurity {
 			stmt.setInt(1, groupProduct.getId());
 			stmt.setInt(2, groupProduct.getGroupid());
 			stmt.setInt(3, groupProduct.getProduct().getId());
-			stmt.setTimestamp(4, new Timestamp(groupProduct.getExpiryDate().getTime()));
+			stmt.setInt(4, groupProduct.getConcurrent());
+			stmt.setTimestamp(5, new Timestamp(groupProduct.getExpiryDate().getTime()));
 			stmt.execute();
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -250,6 +251,34 @@ public class DAOGroup extends DAOSecurity {
 		return group;
 	}
 	
+	/**
+	 * Checks to see if a group has access to a product.
+	 * @param productid	Unique identifier for the product.
+	 * @param groupid	Unique identifier for the group.
+	 * @return			Whether the group has access to the product or not.
+	 * @throws DAOException Problem communicating with our data source.
+	 */
+	public boolean isProductAssociatedToGroup(int productid, int groupid) throws DAOException {
+		boolean exists = false;
+		Connection con = null;
+		CallableStatement stmt = null;
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call GroupProductExists(?,?,?)}");
+			stmt.setInt(1, productid);
+			stmt.setInt(2, groupid);
+			stmt.registerOutParameter(3, java.sql.Types.BOOLEAN);
+			stmt.execute();
+			exists = stmt.getBoolean(3);
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}	
+		}
+		
+		return exists;
+	}
 	/**
 	 * Helper method for populating a group object.
 	 * @param rs The result set that contains all the information on our group. The next() method must be called 

@@ -44,7 +44,7 @@ public class WebGroupTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUti
 	
 	@Test
 	public void testGetMyGroup() {
-		QPPrincipal principal = new QPPrincipal("stickner", null, userid, 1);
+		QPPrincipal principal = new QPPrincipal("stickner", null, userid, 1, groupid);
 		WebGroup web = new WebGroup();
 		web.principal = principal;
 		web.xsl_global = MyResolver.NO_TRANSFORM;

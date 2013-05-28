@@ -26,7 +26,7 @@ public class DataSourceTestUtil extends QPConnectionPoolSetupTest {
 
 	@Override
 	public String getServer() {
-		return "comp-nxt-dev";
+		return "serv-dev-db";
 	}
 
 	@Override

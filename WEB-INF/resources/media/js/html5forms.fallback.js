@@ -15,26 +15,26 @@
  * using jQuery UI Slider
  */
 var initSlider = function() {			
-	$('input[type=range]').each(function() {
-		var $input = $(this);
-		var $slider = $('<div id="' + $input.attr('id') + '" class="' + $input.attr('class') + '"></div>');
-		var step = $input.attr('step');
+	$j('input[type=range]').each(function() {
+		var $jinput = $j(this);
+		var $jslider = $j('<div id="' + $jinput.attr('id') + '" class="' + $jinput.attr('class') + '"></div>');
+		var step = $jinput.attr('step');
 		
-		$input.after($slider).hide();
+		$jinput.after($jslider).hide();
 						
-		$slider.slider({
-			min: $input.attr('min'),
-			max: $input.attr('max'),
-			step: $input.attr('step'),
+		$jslider.slider({
+			min: $jinput.attr('min'),
+			max: $jinput.attr('max'),
+			step: $jinput.attr('step'),
 			change: function(e, ui) {
-				$(this).val(ui.value);
+				$j(this).val(ui.value);
 			}
 		});
 	});
 };
 
 if(!Modernizr.inputtypes.range){
-	$(document).ready(initSlider);
+	$j(document).ready(initSlider);
 };
 
 /* Numeric Spinner
@@ -43,17 +43,17 @@ if(!Modernizr.inputtypes.range){
  * using jQuery Spinner plugin by Brant Burnett(http://btburnett.com/)
  */
 var initSpinner = function() {			
-	$('input[type=number]').each(function() {
-		var $input = $(this);
-		$input.spinner({
-			min: $input.attr('min'),
-			max: $input.attr('max'),
-			step: $input.attr('step')
+	$j('input[type=number]').each(function() {
+		var $jinput = $j(this);
+		$jinput.spinner({
+			min: $jinput.attr('min'),
+			max: $jinput.attr('max'),
+			step: $jinput.attr('step')
 		});
 	});
 };
 if(!Modernizr.inputtypes.number){		
-	$(document).ready(initSpinner);
+	$j(document).ready(initSpinner);
 };
 
 /* Datepicker
@@ -62,18 +62,18 @@ if(!Modernizr.inputtypes.number){
  * using jQuery UI Datepicker
  */
 var initDatepicker = function() {
-	$('input[type=date]').each(function() {
-		var $input = $(this);
-		$input.datepicker({
-			minDate: $input.attr('min'),
-			maxDate: $input.attr('max'),
+	$j('input[type=date]').each(function() {
+		var $jinput = $j(this);
+		$jinput.datepicker({
+			minDate: $jinput.attr('min'),
+			maxDate: $jinput.attr('max'),
 			dateFormat: 'yy-mm-dd'
 		});
 	});
 };
 
 if(!Modernizr.inputtypes.date){
-	$(document).ready(initDatepicker);
+	$j(document).ready(initDatepicker);
 };
 
 /* ColorPicker
@@ -83,19 +83,19 @@ if(!Modernizr.inputtypes.date){
  * http://www.eyecon.ro/colorpicker/
  */
 var initColorpicker = function() {
-	$('input[type=color]').each(function() {
-		var $input = $(this);
-		$input.ColorPicker({
+	$j('input[type=color]').each(function() {
+		var $jinput = $j(this);
+		$jinput.ColorPicker({
 			onSubmit: function(hsb, hex, rgb, el) {
-				$(el).val(hex);
-				$(el).ColorPickerHide();
+				$j(el).val(hex);
+				$j(el).ColorPickerHide();
 			}
 		});
 	});			
 };
 
 if(!Modernizr.inputtypes.color){
-	$(document).ready(initColorpicker);
+	$j(document).ready(initColorpicker);
 };
 
 /* Placeholder
@@ -105,11 +105,11 @@ if(!Modernizr.inputtypes.color){
  * http://www.viget.com/inspire/a-jquery-placeholder-enabling-plugin/
  */
 var initPlaceholder = function() {
-	$('input[placeholder]').placehold({
+	$j('input[placeholder]').placehold({
 		placeholderClassName: 'placeholder'
 	});
 };
 
 if(!Modernizr.input.placeholder){
-	$(document).ready(initPlaceholder);
+	$j(document).ready(initPlaceholder);
 };

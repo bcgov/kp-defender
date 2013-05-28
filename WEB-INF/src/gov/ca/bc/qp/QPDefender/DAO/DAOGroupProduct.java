@@ -12,6 +12,7 @@ package gov.ca.bc.qp.QPDefender.DAO;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOProducts;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
+import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
 
@@ -63,5 +64,68 @@ public class DAOGroupProduct extends DAOSecurity  {
 			
 		}
 		return gps;
+	}
+
+	/**
+	 * Looks up a product associated with a group by it's unique identifier
+	 * @param gpid	The unique identifier for this specific group/product information.
+	 * @return	The product and specific group information for the unique identifier.
+	 * @throws DAOException	An error occurred when accessing our data source.
+	 * @throws ObjectNotFoundException No group product with this unique id exists.
+	 */
+	public GroupProduct lookupGroupProductById(int gpid) throws DAOException, ObjectNotFoundException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		ResultSet rs = null;
+		DAOProducts dao = new DAOProducts();
+		GroupProduct gp = new GroupProduct();
+		try {
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{call lookupGroupProductById(" + Integer.toString(gpid) + ")}");
+			// Retrieve result set.
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				Product p = dao.lookupProductById(rs.getInt("productId"));
+				gp = new GroupProduct(rs.getInt("ID"), 
+					rs.getInt("GroupId"), p, rs.getInt("Concurrent"),
+					rs.getDate("ExpiryDate"));
+			} else {
+				throw new ObjectNotFoundException("No group product with that id exists");
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			// Close all our resources. Ignore any exceptions to give each a chance to close.
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { rs.close(); } catch(Exception ignore) {}
+			try { stmt.close(); } catch (Exception ignore) {}
+			
+		}
+		return gp;	
+	}
+	
+	/**
+	 * Deletes a groups access to a product. Does not delete the group or product.
+	 * @param id Unique identifier of this groups access to the product.
+	 * @throws DAOException Problem occurred while accessing our data source.
+	 */
+	public void deleteGroupProduct(int id) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call DeleteGroupProduct(?)}");
+			stmt.setInt(1, id);
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			// Close all our resources. Ignore any exceptions to give each a chance to close.
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch (Exception ignore) {}			
+		}
+		
 	}
 }

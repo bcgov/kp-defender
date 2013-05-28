@@ -23,7 +23,7 @@ public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil
 		
 		WebUser web = new WebUser();
 		// Set a fake principal usually handled by the container
-		QPPrincipal principal = new QPPrincipal("changes", null, userid, 1);
+		QPPrincipal principal = new QPPrincipal("changes", null, userid, 1, 1);
 		web.setPrincipal(principal);
 		
 		// Set our XSLT to none.

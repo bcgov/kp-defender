@@ -32,7 +32,7 @@ public class GroupProduct implements QPBean {
 	private int groupid = -1;
 	private Product product = new Product();
 	private int concurrent = -1;
-	private Date expiryDate = null;
+	private Date expiryDate = ObjectUtil.getEmptyDate();
 	
 	/**
 	 * Creates an empty group product object.

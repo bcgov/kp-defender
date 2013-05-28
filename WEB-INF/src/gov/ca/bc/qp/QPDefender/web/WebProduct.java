@@ -47,20 +47,22 @@ import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
  * @author spencer.tickner
  */
 @Path("{xsl:.+}/products")
-public class WebProduct {
+public class WebProduct extends WebInterface {
 
-	Logger log = Logger.getLogger(getClass());
+	static final Logger log = Logger.getLogger(WebProduct.class);
 
 	// Grab our context to get our principal.
+	/*
 	@Context private SecurityContext securityContext;
 	@Context private HttpHeaders header;
 	@Context private UriInfo uriInfo;
-	
+	*/
 	/**
 	 * Helper method for ensuring we don't get null pointers if running outside a 
 	 * 	security context.
 	 * @return	A object representing the user accessing this interface.
 	 */
+	/*
 	public QPPrincipal getPrincipal() {
 		QPPrincipal principal = null;
 		if(securityContext != null)
@@ -70,6 +72,7 @@ public class WebProduct {
 	
 	// Get our xslt path for transformations.
 	@PathParam("xsl") public String xsl_global;
+	*/
 	
 	@POST
 	@Path("/add")
@@ -101,8 +104,8 @@ public class WebProduct {
 			// Marshal them with a wrapper.
 			Document document = marshaller.marshalToDomWrapped(products, "products");
 			// Transform our xsl
-			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
+			if(!this.xsl.equals(MyResolver.NO_TRANSFORM)) {
+				MyResolver resolver = new MyResolver(this.xsl, this.getPrincipal(), this.uriInfo);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				document = trans.transform(document, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
@@ -157,8 +160,8 @@ public class WebProduct {
 				// Marshal out to a document.
 				doc = marshaller.marshalToDom(product);
 				// Transform our xsl
-				if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-					MyResolver resolver = new MyResolver(xsl_global, this.getPrincipal(), this.uriInfo);
+				if(!xsl.equals(MyResolver.NO_TRANSFORM)) {
+					MyResolver resolver = new MyResolver(xsl, this.getPrincipal(), this.uriInfo);
 					XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 					doc = trans.transform(doc, resolver.getParams());
 					type = MediaType.TEXT_HTML_TYPE;
@@ -180,5 +183,12 @@ public class WebProduct {
 		} finally {}
 		
 		return response;
+	}
+	
+
+	@Override
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		return log;
 	}
 }

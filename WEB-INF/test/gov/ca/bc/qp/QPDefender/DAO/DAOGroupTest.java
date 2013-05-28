@@ -96,4 +96,19 @@ public class DAOGroupTest extends DataSourceTestUtil  {
 		Assert.assertTrue(group.isEqual(copy));
 		
 	}
+	
+	@Test
+	public void testProductExistsForGroup() {
+		int groupid = 1;
+		int productid_good = 1;
+		int productid_bad = 122222;
+		DAOGroup dao = new DAOGroup();
+		try {
+			Assert.assertTrue(dao.isProductAssociatedToGroup(productid_good, groupid));
+			Assert.assertFalse(dao.isProductAssociatedToGroup(productid_bad, groupid));
+		} catch(Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
 }
