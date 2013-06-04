@@ -310,7 +310,70 @@
 	</xsl:template>
 	
 	<xsl:template match="users">
-          <xsl:apply-templates select="useraccess"/>
+		<xsl:for-each select="useraccess">
+			<xsl:apply-templates select="self::useraccess"/>
+			<xsl:apply-templates select="productAccess"/>
+			<div class="addProduct"> 
+				<a href="/QPDefender/app/productaccess/userCredId={userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/empty" class="lbOn">
+					<img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add Product</a>
+			</div>
+		</xsl:for-each>
+
+	</xsl:template>
+
+	<xsl:template match="productAccess">
+		<div class="product">
+        	<table border="0" cellspacing="0" cellpadding="3">
+			  <tr>
+			  	<!--
+			    <td class="productname"><label>Product Name:</label>      
+					<select name="productaccess_productid2">
+			        	<option value="-1">Please Choose</option>
+						<xsl:variable name="pid" select="product/id"/>
+						<xsl:for-each select="/group/groupProducts/groupProduct">
+							<option value="{id}">
+								<xsl:if test="product/id = $pid">
+									<xsl:attribute name="selected">selected</xsl:attribute>
+								</xsl:if>
+								<xsl:value-of select="product/productname"/>
+							</option>
+						</xsl:for-each>
+			      	</select>
+				</td>
+				-->
+			    <td class="productname"><label>Product Name:</label> <xsl:value-of select="product/productname"/></td>
+			    <td class="timeout"><label>Timeout:</label>   <xsl:value-of select="timeout"/></td>
+			    <td colspan="2" class="active"><label>Active:</label>      
+					<input type="checkbox" name="productaccess_active" disabled="disabled">
+						<xsl:if test="active = 'true'">
+							<xsl:attribute name="checked">checked</xsl:attribute>
+						</xsl:if>
+					</input>
+				</td>
+				<xsl:apply-templates select="roles/role[1]"/>
+			    </tr>
+			  	<xsl:for-each select="roles/role">
+					<xsl:if test="position() != 1">
+						<tr>
+			   				<xsl:apply-templates select="self::role"/>
+					    </tr>
+					</xsl:if>
+				</xsl:for-each>
+			</table>
+			<div class="controlButtons">
+				<form action="/QPDefender/app/group/productAccess/delete/ID/{userProductsID}" method="post"><input type="submit" value="Delete Product"/></form>
+				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="media/images/remove.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
+				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/roles/userrole/empty" class="lbOn"><img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
+			</div>
+		</div>
+	</xsl:template>
+
+	<xsl:template match="role">
+		<xsl:if test="preceding-sibling::role">
+			<td colspan="4">&#160;</td>
+		</xsl:if>
+		<td class="useraccess_username"><label>Role Name:</label>&#160; <xsl:value-of select="roleName"/></td>
+		<td class="submit"><a href="/QPDefender/app/roles/delete/{id}">Delete Role</a></td>
 	</xsl:template>
 
 	<xsl:template match="groupProducts">

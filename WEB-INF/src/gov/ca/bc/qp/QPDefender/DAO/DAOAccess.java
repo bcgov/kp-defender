@@ -100,6 +100,72 @@ public class DAOAccess extends DAOSecurity {
 	}
 	
 	/**
+	 * Adds or updates a users access to a group product.
+	 * @param userProductId	The unique identifier for this users access to this group product. If not found will add, else update.
+	 * @param userid The unique identifier for the user accessing this product.
+	 * @param groupProductId Unique identifier for a groups access to a product that this user belongs to.
+	 * @param timeout 
+	 * @param active
+	 * @return unique identifier for this users access to a product.
+	 * @throws DAOException
+	 */
+	public int AddUpdateUserProduct(int userProductId, int userid, int groupProductId, int timeout, boolean active) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		int id = -1;
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call UpdateAddUserProduct(?,?,?,?,?,?)}");
+			stmt.setInt(1, userProductId);
+			stmt.setInt(2, userid);
+			stmt.setInt(3, groupProductId);
+			stmt.setInt(4, timeout);
+			stmt.setBoolean(5, active);
+			stmt.registerOutParameter(6, java.sql.Types.INTEGER);
+			stmt.execute();
+			id = stmt.getInt(6);
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			// clean up our connection objects
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}			
+		}
+		return id;
+	}
+	
+	/**
+	 * Looks up the access to a product by that accesses unique identifier.
+	 * @param productAccessId	The unique identifier for a users access to a product.
+	 * @throws DAOException	Error occurred when accessing our datasource.
+	 */
+	public ProductAccess lookupProductAccessById(int productAccessId) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		ResultSet rs = null;
+		ProductAccess pa = null;
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call lookupProductAccessById(?)}");
+			stmt.setInt(1, productAccessId);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				pa = this.createProductAccess(rs.getInt("ID"), 
+						rs.getInt("productId"), rs.getInt("userid"), 
+						rs.getInt("timeout"), rs.getBoolean("active"));
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			// Cleanup
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+			try { rs.close(); } catch(Exception ignore) {}			
+		}
+		return pa;
+	}
+	
+	/**
 	 * Adds, or updates, in bulk all the Product Access constraints for a user.
 	 * @param access	Object representing all the products and access constraints for a user.
 	 * @throws DAOException	Error occurred when accessing our data source.
@@ -230,6 +296,29 @@ public class DAOAccess extends DAOSecurity {
 	}
 	
 	/**
+	 * Deletes a users access to a product as well as it's associated role information.
+	 * @param productAccessId Unique identifier of the access to a product to delete.
+	 * @throws DAOException Error occurred while accessing our datasource.
+	 */
+	public void deleteProductAccess(int productAccessId) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call deleteProductAccess(?)}");
+			stmt.setInt(1, productAccessId);
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			// Cleanup
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}			
+		}
+	}
+	
+	/**
 	 * Looks up access information for a product.
 	 * @param userid Unique identifier for a user.
 	 * @return Access information for a product.
@@ -249,6 +338,10 @@ public class DAOAccess extends DAOSecurity {
 			rs = stmt.executeQuery();
 			while(rs.next()) {
 			
+				access.add(this.createProductAccess(
+						rs.getInt("ID"), rs.getInt("productid"), rs.getInt("userid"), 
+						rs.getInt("timeout"), rs.getBoolean("active")));
+				/*
 				int pId = rs.getInt("productid");
 				List<Role> roles = daoRole.getRolesByUserAndProduct(userid, pId);
 				Product p = new Product();
@@ -260,6 +353,7 @@ public class DAOAccess extends DAOSecurity {
 				ProductAccess pa = new ProductAccess( rs.getInt("ID"),
 					rs.getInt("userid"), p, roles, rs.getInt("timeout"), rs.getBoolean("active"));
 				access.add(pa);
+				*/
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -270,5 +364,30 @@ public class DAOAccess extends DAOSecurity {
 		}
 		
 		return access;
+	}
+	
+	/**
+	 * Convenience method for calling the various objects to create a fully instantiated product access object.
+	 * @param id		Unique identifier for the access to this product for a certain user.
+	 * @param productId	Unique identifier for the product that this user has access to.
+	 * @param userid	Unique identifier for the user that has access to this product.
+	 * @param timeout	The time (in minutes) before the user is kicked out of this product.
+	 * @param active	Whether or not the user can currently access this product.
+	 * @return			Complete object representing a user and the access to a products details.
+	 * @throws DAOException Error occurred while accessing our datasource.
+	 */
+	private ProductAccess createProductAccess(int id, int productId, int userid, int timeout, boolean active) throws DAOException {
+		DAORoles daoRole = new DAORoles();
+		Product product = null;
+		List<Role> roles = null;
+		try {
+			product = Product.getProductById(productId);
+			roles = daoRole.getRolesByUserAndProduct(userid, productId);
+		} catch (ObjectNotFoundException e) {
+			// If a product is not found just add empty product.
+			product = new Product();
+		}
+		
+		return new ProductAccess(id, userid, product, roles, timeout, active);
 	}
 }
