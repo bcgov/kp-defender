@@ -59,7 +59,7 @@
 		<form action="/QPDefender/app/group/groups/add" method="post" name="AddUpdateGroup">
 			<div class="group_info">
 					<input type="hidden" value="{id}" name="id" id="id"/>	
-					<table border="0" cellspacing="0" cellpadding="3">
+					<table border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td class="company_ministy">Company/Ministry:</td>
 							<td class="company_ministy">
@@ -210,7 +210,7 @@
 					-->
 				</div>
 				<div class="access_info">
-					<table border="0" cellspacing="0" cellpadding="3">
+					<table border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td class="active">
 								<label>Active</label>
@@ -323,7 +323,7 @@
 
 	<xsl:template match="productAccess">
 		<div class="product">
-        	<table border="0" cellspacing="0" cellpadding="3">
+        	<table border="0" cellspacing="0" cellpadding="0">
 			  <tr>
 			  	<!--
 			    <td class="productname"><label>Product Name:</label>      
