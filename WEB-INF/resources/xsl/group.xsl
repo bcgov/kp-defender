@@ -25,6 +25,7 @@
 								<h1>
 									<xsl:value-of select="group/dept_branch"/>
 								</h1>
+								<div class="topNav"><a href="#">Search Group</a> | <a href="#">Search Users</a> | <a href="#">Add Product</a></div>
 								<div class="auto_info">
 									<div class="CreatedBy">Created By: <xsl:value-of select="group/insert_user/username"/></div>
 									<div class="CreatedDate">Created On: <xsl:value-of select="fun:parseDate(group/insert_dt)"/></div>
