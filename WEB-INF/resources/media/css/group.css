@@ -1,0 +1,249 @@
+@charset "utf-8";
+/* CSS Document */
+.container {
+	width:1000px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10pt
+}
+.auto_info {
+	padding: 10px;
+	width: 980px;
+	float:left;
+	background-color: #069;
+	-moz-border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	-moz-border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-top-color: #99C0FB;
+	border-right-color: #99C0FB;
+	border-left-color: #99C0FB;
+	color: #FFF;
+}
+.user {
+	padding: 10px;
+	clear: left;
+	float: left;
+	width: 980px;
+	margin-top: 20px;
+	background-color: #DAE9FE;
+	-moz-border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	-moz-border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-top-color: #99C0FB;
+	border-right-color: #99C0FB;
+	border-left-color: #99C0FB;
+}
+
+.CreatedBy {
+	width:240px;
+	float:left;
+}
+.CreatedDate {
+	width:240px;
+	float:left;
+}
+.ModifiedBy {
+	width:240px;
+	float:left;
+}
+.ModifiedDate {
+	width:240px;
+	float:left;
+}		
+.group_info {
+	float:left;
+	clear:left;
+	padding: 0px;
+	width: 550px;
+}
+
+.group_info table td {
+	text-align:left;
+	padding-top: 5px;
+	padding-right: 0px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+
+}
+form button {
+	background-color: #069;
+	color: #FFF;
+	border:none;
+}
+td.addProduct a {
+	text-decoration: none;
+	color: #1077B9;
+	font-weight: bold;
+	padding: 0px;
+	margin-right: 20px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+}
+td.submit {
+	text-align: right;
+}
+
+td.addUser a {
+	text-decoration: none;
+	padding: 0px;
+	color: #1077B9;
+	font-weight: bold;
+}
+tr.controls td{
+	padding-top: 20px;
+}
+body {
+	width:1000px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10pt
+}
+
+
+
+input[type="button"] {
+	margin-right:0;
+}
+
+input {
+	margin-right:10px;
+}
+.contact_info {
+	width: 980px;
+	float:left;
+	clear:left;
+	padding:10px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCC;
+}
+.contact_info table td {
+	padding:5px
+
+}
+.order_info {
+	float:left;
+	margin-left: 20px;
+	margin-top:10px;
+	width: 350px;
+
+}
+
+h1 {
+	font-size:21px;
+	color: #069;
+	text-transform: uppercase;
+	float: left;
+}
+.topNav {
+	float: right;
+	color: #069;
+	padding-top: 20px;	
+}
+.topNav a {
+	color: #069;
+}
+.access_info {
+	float:right;
+	clear:none;
+	padding: 10px;
+	background-color: #DAE9FE;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #99C0FB;
+	width: 350px;
+}
+.access_info table td {
+	padding:5px;
+}
+.product_info {
+	float:left;
+	clear: left;
+	margin-top:20px;
+	width:980px;
+	padding:0px;
+}
+.form_container {
+	width:960px;
+	float:left;
+	clear:left;
+	border: 1px solid #99C0FB;
+	margin-top: 0px;
+	padding: 20px;
+}
+.product {
+	padding: 10px;
+	clear: left;
+	float: left;
+	width: 980px;
+	border: 1px solid #99C0FB;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+.controlButtons a  {
+	color: #069;
+	text-decoration: none;
+	text-align: right;
+	font-weight: bold;
+	float: left;
+	margin-top: 20px;
+	margin-right: 20px;
+}
+.addProduct a {
+	clear: left;
+	float: left;
+	width: 1000px;
+	text-decoration: none;
+	font-weight: bold;
+	color: #069;
+	margin-top: 20px;
+	text-align: right;
+}
+
+
+
+td.productname {
+	width: 200px;
+}
+table.productSpecs {
+	margin-top: 10px;
+}
+table.productSpecs td {
+	padding:5px;
+}
+tr.thead {
+	font-weight:bold;
+}.productSpecs tr td a {
+	font-weight: bold;
+	color: #0E76BC;
+	text-decoration: none;
+}
+td.useraccess_credential2 label {
+	display: block;
+}
+.product input[type="submit"] {
+	float: right;
+}
+td.timeout {
+	padding-right: 20px;
+}
+
