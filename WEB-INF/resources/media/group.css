@@ -150,6 +150,15 @@ h1 {
 	font-size:21px;
 	color: #069;
 	text-transform: uppercase;
+	float: left;
+}
+.topNav {
+	float: right;
+	color: #069;
+	padding-top: 20px;	
+}
+.topNav a {
+	color: #069;
 }
 .access_info {
 	float:right;
@@ -227,4 +236,14 @@ tr.thead {
 	font-weight: bold;
 	color: #0E76BC;
 	text-decoration: none;
-}	
+}
+td.useraccess_credential2 label {
+	display: block;
+}
+.product input[type="submit"] {
+	float: right;
+}
+td.timeout {
+	padding-right: 20px;
+}
+
