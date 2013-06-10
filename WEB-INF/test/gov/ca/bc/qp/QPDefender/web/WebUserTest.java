@@ -9,6 +9,7 @@ import org.w3c.dom.Document;
 import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
+import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil   {
@@ -22,8 +23,9 @@ public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil
 	public void testUpdateCredentials(){
 		
 		WebUser web = new WebUser();
+		UserMetaData ud = new UserMetaData("namespace:name=>value;");
 		// Set a fake principal usually handled by the container
-		QPPrincipal principal = new QPPrincipal("changes", null, userid, 1, 1);
+		QPPrincipal principal = new QPPrincipal("changes", null, ud, userid, 1, 1);
 		web.setPrincipal(principal);
 		
 		// Set our XSLT to none.

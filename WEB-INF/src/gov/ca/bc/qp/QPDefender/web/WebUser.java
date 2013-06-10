@@ -229,7 +229,8 @@ public class WebUser {
 			@FormParam("credential") String credential,
 			@FormParam("credential") String credential2,
 			@FormParam("userid") String userid,
-			@FormParam("groupid") String groupid) {
+			@FormParam("groupid") String groupid,
+			@FormParam("meta") String meta) {
 		
 		Response response = null;
 		int i_userid = -1;
@@ -242,7 +243,7 @@ public class WebUser {
 		i_groupid = Integer.parseInt(groupid);
 		i_credTypeId = Integer.parseInt(credTypeId);
 
-		User user = new User(i_userid, i_groupid, username, email);
+		User user = new User(i_userid, i_groupid, username, email, meta);
 		
 		DAOAccess dao = new DAOAccess();
 		try {

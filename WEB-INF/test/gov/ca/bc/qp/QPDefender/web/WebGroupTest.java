@@ -13,6 +13,7 @@ import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.QPDefender.test.Utility;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.dom.QPSchemaValidator;
@@ -44,7 +45,8 @@ public class WebGroupTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUti
 	
 	@Test
 	public void testGetMyGroup() {
-		QPPrincipal principal = new QPPrincipal("stickner", null, userid, 1, groupid);
+		UserMetaData ud = new UserMetaData("namespace:name=>value");
+		QPPrincipal principal = new QPPrincipal("stickner", null, ud, userid, 1, groupid);
 		WebGroup web = new WebGroup();
 		web.principal = principal;
 		web.xsl_global = MyResolver.NO_TRANSFORM;

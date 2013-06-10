@@ -10,6 +10,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
 
 import org.junit.Test;
 
@@ -28,7 +29,9 @@ public class QPDefenderXSLTResolverTest {
 	@Test
 	public void testQPDefenderXSLTResolverNoParams() {
 		String unresolvedPath = "test";
-		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), 1, 1, 1);
+		// Placeholder for this test.
+		UserMetaData ud = new UserMetaData("namespace:name=>value");
+		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), ud, 1, 1, 1);
 		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
 
 		// Ensure our xslt is resolving
@@ -45,7 +48,9 @@ public class QPDefenderXSLTResolverTest {
 	@Test
 	public void testQPDefenderXSLTResolverWithParams() {
 		String unresolvedPath = "test/param1=value1/param2=value2";
-		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), 1, 1, 1);
+		// Placeholder for this test.
+		UserMetaData ud = new UserMetaData("namespace:name=>value");
+		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), ud, 1, 1, 1);
 		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
 
 		// Ensure our xslt is resolving
