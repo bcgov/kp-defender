@@ -324,10 +324,9 @@
 
 	<xsl:template match="productAccess">
 		<div class="product">
-        	<table border="0" cellspacing="0" cellpadding="0">
-			  <tr>
+        	
 			  	<!--
-			    <td class="productname"><label>Product Name:</label>      
+			    <div class="productname"><label>Product Name:</label>      
 					<select name="productaccess_productid2">
 			        	<option value="-1">Please Choose</option>
 						<xsl:variable name="pid" select="product/id"/>
@@ -340,27 +339,27 @@
 							</option>
 						</xsl:for-each>
 			      	</select>
-				</td>
+				
 				-->
-			    <td class="productname"><label>Product Name:</label> <xsl:value-of select="product/productname"/></td>
-			    <td class="timeout"><label>Timeout:</label>   <xsl:value-of select="timeout"/></td>
-			    <td colspan="2" class="active"><label>Active:</label>      
+			    <div class="productname"><label>Product Name:</label> <xsl:value-of select="product/productname"/></div>
+			    <div class="timeout"><label>Timeout:</label>   <xsl:value-of select="timeout"/></div>
+			    <div class="active"><label>Active:</label>      
 					<input type="checkbox" name="productaccess_active" disabled="disabled">
 						<xsl:if test="active = 'true'">
 							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:if>
 					</input>
-				</td>
-				<xsl:apply-templates select="roles/role[1]"/>
-			    </tr>
+				</div>
+				<div class="role"><xsl:apply-templates select="roles/role[1]"/>
+			    
 			  	<xsl:for-each select="roles/role">
 					<xsl:if test="position() != 1">
-						<tr>
+						
 			   				<xsl:apply-templates select="self::role"/>
-					    </tr>
+					  
 					</xsl:if>
-				</xsl:for-each>
-			</table>
+				</xsl:for-each></div>
+			
 			<div class="controlButtons">
 				<form action="/QPDefender/app/group/productAccess/delete/ID/{userProductsID}" method="post"><input type="submit" value="Delete Product"/></form>
 				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="media/images/remove.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
