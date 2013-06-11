@@ -84,6 +84,8 @@ form button {
 	background-color: #069;
 	color: #FFF;
 	border:none;
+	padding: 2px;
+	cursor:pointer;
 }
 td.addProduct a {
 	text-decoration: none;
@@ -199,15 +201,6 @@ h1 {
 	margin-top: 0px;
 	margin-bottom: 5px;
 }
-.controlButtons a  {
-	color: #069;
-	text-decoration: none;
-	text-align: right;
-	font-weight: bold;
-	float: left;
-	margin-top: 20px;
-	margin-right: 20px;
-}
 .addProduct a {
 	clear: left;
 	float: left;
@@ -218,9 +211,6 @@ h1 {
 	margin-top: 20px;
 	text-align: right;
 }
-
-
-
 td.productname {
 	width: 200px;
 }
@@ -237,13 +227,71 @@ tr.thead {
 	color: #0E76BC;
 	text-decoration: none;
 }
-td.useraccess_credential2 label {
-	display: block;
+.user table {
+	padding: 0;
+}
+.user input[type="submit"] {
+	padding: 2px;
+	vertical-align: middle;
+	float: right;
+	background: #069;
+	color: #FFFFFF;
+	border: 0;
+}
+div.timeout {
+	margin-right: 20px;
+	float: left;
+}
+div.productname {
+	margin-right: 20px;
+	float: left;
+}
+div.active {
+	float: left;
+	margin-right: 20px;
+}
+div.active input {
+	vertical-align: middle;
+}
+div.role {
+	float: left;
+}
+div.role label {
+	float: left;
+}
+div.role a {
+	float: right;
+	margin-left: 20px;
+}
+input[type="submit"] {
+	background: #069;
+	color: #FFFFFF;
+	border: 0;
+	cursor:pointer;
+	padding: 2px;
 }
 .product input[type="submit"] {
-	float: right;
+	float: left;
+	clear: left;
+	margin-top: 20px;
+	background: #069;
+	color: #FFFFFF;
+	border: 0;
 }
-td.timeout {
+.controlButtons a  {
+	color: #069;
+	text-decoration: none;
+	font-weight: bold;
+	float: left;
+	margin-top:20px;
+	margin-left: 20px;
+}
+table.productSpecs a.lbOn {
 	padding-right: 20px;
 }
-
+div#lightbox {
+	padding: 20px;
+}
+div#lightbox input[type="submit"] {
+	margin-left: 5px;
+}
