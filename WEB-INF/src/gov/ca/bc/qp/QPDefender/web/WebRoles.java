@@ -55,7 +55,7 @@ public class WebRoles extends WebInterface {
 	@Path("/userrole/add")
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
 	public Response addUserRole(@FormParam("userid") String userid, 
-			@FormParam("productId") String productId, 
+			@FormParam("productid") String productId, 
 			@FormParam("roleName") String roleName) {
 		DAORoles dao = new DAORoles();
 		DAOGroup daoGroup = new DAOGroup();

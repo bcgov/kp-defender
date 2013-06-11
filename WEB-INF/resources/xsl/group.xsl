@@ -18,6 +18,10 @@
 	<xsl:template match="/">
 		<html>
 			<xsl:sequence select="fun:printHeader('Add Group')"/>
+			<script type="text/javascript">
+				/* Here */
+				<xsl:sequence select="fun:printUserAccessJavascript()"/>
+			</script>
 			<body>
 					<div class="group_information">
 						<xsl:choose>

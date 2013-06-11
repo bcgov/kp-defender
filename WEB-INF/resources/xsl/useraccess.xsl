@@ -25,7 +25,6 @@
 				<div class="container">	
 					<xsl:apply-templates select="useraccess"/>
 					<div class="actions">
-						<input type="submit" value="Submit"/>
 						<a href="#" class="lbAction" rel="deactivate"><button>Cancel</button></a>
 					</div>
 				</div>
@@ -72,10 +71,15 @@
 			          </xsl:variable>
 		              <td class="useraccess_credential2">
 		              	<label>Subnet Mask</label> <xsl:sequence select="fun:textInput(credential2, false(), $atts)"/>
-		              	<input type="submit" value="Submit"/>
+		              	
 		              </td>
+					  <td class="meta_data">
+					  	<label>Meta String (ns:name=>value;)</label>
+						<textarea cols="10" rows="4" name="meta" id="meta"><xsl:value-of select="user/meta"/></textarea>
+					  </td>
 				</tr>
 	          </table>
+			  <input type="submit" value="Submit"/>
 	        </div>
 	   </form>		
 	</xsl:template>
@@ -126,4 +130,32 @@
 		
 	</xsl:function>
 	
-</xsl:stylesheet>
+</xsl:stylesheet><!-- Stylus Studio meta-information - (c) 2004-2009. Progress Software Corporation. All rights reserved.
+
+<metaInformation>
+	<scenarios>
+		<scenario default="yes" name="Scenario1" userelativepaths="yes" externalpreview="no" url="..\..\..\..\..\..\..\test\blah.xml" htmlbaseurl="" outputurl="" processortype="saxon8" useresolver="yes" profilemode="0" profiledepth="" profilelength=""
+		          urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext="" validateoutput="no" validator="internal"
+		          customvalidator="">
+			<advancedProp name="sInitialMode" value=""/>
+			<advancedProp name="bXsltOneIsOkay" value="true"/>
+			<advancedProp name="bSchemaAware" value="true"/>
+			<advancedProp name="bXml11" value="false"/>
+			<advancedProp name="iValidation" value="0"/>
+			<advancedProp name="bExtensions" value="true"/>
+			<advancedProp name="iWhitespace" value="0"/>
+			<advancedProp name="sInitialTemplate" value=""/>
+			<advancedProp name="bTinyTree" value="true"/>
+			<advancedProp name="bWarnings" value="true"/>
+			<advancedProp name="bUseDTD" value="false"/>
+			<advancedProp name="iErrorHandling" value="fatal"/>
+		</scenario>
+	</scenarios>
+	<MapperMetaTag>
+		<MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/>
+		<MapperBlockPosition></MapperBlockPosition>
+		<TemplateContext></TemplateContext>
+		<MapperFilter side="source"></MapperFilter>
+	</MapperMetaTag>
+</metaInformation>
+-->

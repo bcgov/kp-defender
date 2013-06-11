@@ -41,7 +41,7 @@ public class DAOAccess extends DAOSecurity {
 		try {
 			con = this.getConnectionPool().getConnection();
 			con.setAutoCommit(false);
-			stmt = con.prepareCall("{call UpdateAddUserAccess(?,?,?,?,?,?,?,?)}");
+			stmt = con.prepareCall("{call UpdateAddUserAccess(?,?,?,?,?,?,?,?,?)}");
 			stmt.setInt(1, access.getUser().getId());
 			stmt.setInt(2, access.getUser().getGroupId());
 			stmt.setString(3, access.getUser().getUsername());
@@ -50,6 +50,7 @@ public class DAOAccess extends DAOSecurity {
 			stmt.setString(6, access.getCredentialType());
 			stmt.setString(7, access.getCredential());
 			stmt.setString(8, access.getCredential2());
+			stmt.setString(9, access.getUser().getMeta());
 			stmt.execute();
 			
 			if(access.getProductAccess() != null)
