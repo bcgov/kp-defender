@@ -199,6 +199,24 @@ h1 {
 	margin-top: 0px;
 	margin-bottom: 5px;
 }
+.productname {
+	width: auto;
+	float: left;
+	clear: right;
+} 
+.timeout {
+	width: 250px;
+	float: left;
+	clear: right;
+}
+.active {
+	float: left;
+	clear: right;
+}
+.role {
+	float: left;
+	clear: right;
+} 
 .controlButtons a  {
 	color: #069;
 	text-decoration: none;
@@ -218,9 +236,6 @@ h1 {
 	margin-top: 20px;
 	text-align: right;
 }
-
-
-
 td.productname {
 	width: 200px;
 }
@@ -229,6 +244,9 @@ table.productSpecs {
 }
 table.productSpecs td {
 	padding:5px;
+}
+table.productSpecs a {
+	padding-right: 20px;
 }
 tr.thead {
 	font-weight:bold;
@@ -243,7 +261,3 @@ td.useraccess_credential2 label {
 .product input[type="submit"] {
 	float: right;
 }
-td.timeout {
-	padding-right: 20px;
-}
-

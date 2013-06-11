@@ -245,6 +245,9 @@ table.productSpecs {
 table.productSpecs td {
 	padding:5px;
 }
+table.productSpecs a {
+	padding-right: 20px;
+}
 tr.thead {
 	font-weight:bold;
 }.productSpecs tr td a {
