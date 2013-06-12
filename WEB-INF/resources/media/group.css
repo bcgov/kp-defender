@@ -87,6 +87,13 @@ form button {
 	padding: 2px;
 	cursor:pointer;
 }
+a.lbAction button {
+	background-color: #069;
+	color: #FFF;
+	border:none;
+	padding: 2px;
+	cursor:pointer;	
+}
 td.addProduct a {
 	text-decoration: none;
 	color: #1077B9;
@@ -262,6 +269,7 @@ div.role label {
 div.role a {
 	float: right;
 	margin-left: 20px;
+	color: #069;
 }
 input[type="submit"] {
 	background: #069;
@@ -278,6 +286,13 @@ input[type="submit"] {
 	color: #FFFFFF;
 	border: 0;
 }
+input[type="reset"] {
+	background: #069;
+	color: #FFFFFF;
+	border: 0;
+	cursor:pointer;
+	padding: 2px;	
+}
 .controlButtons a  {
 	color: #069;
 	text-decoration: none;
@@ -292,6 +307,24 @@ table.productSpecs a.lbOn {
 div#lightbox {
 	padding: 20px;
 }
+div#lightbox td input {
+	padding: 0;
+	margin:0;
+}
 div#lightbox input[type="submit"] {
 	margin-left: 5px;
 }
+div#lightbox td.useraccess_credential2 label {
+	display: block;
+}
+div#lightbox td.useraccess_credential2 input[name="credential2"] {
+	float: left;
+}
+div#lightbox td.useraccess_credential2 input[type="submit"] {
+	float: left;
+	clear: none;
+	margin: 0;
+}
+div#lightbox .user {
+	margin-bottom: 20px;
+}	
