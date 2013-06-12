@@ -87,7 +87,6 @@
 	<xsl:function name="fun:printUserAccessJavascript">
 		<![CDATA[
 			function switchCredentials(elem) {
-				alert("here");
 				var tr = elem.parentNode.parentNode;
 				var value = elem.options[elem.selectedIndex].value;
 				var elems = tr.getElementsByTagName("*");
