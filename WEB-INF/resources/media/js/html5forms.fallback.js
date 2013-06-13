@@ -61,16 +61,28 @@ if(!Modernizr.inputtypes.number){
  *
  * using jQuery UI Datepicker
  */
+// TODO: See lightbox.js for re-init of date pickers on render.
 var initDatepicker = function() {
 	$j('input[type=date]').each(function() {
 		var $jinput = $j(this);
-		$jinput.datepicker({
-			minDate: $jinput.attr('min'),
-			maxDate: $jinput.attr('max'),
-			dateFormat: 'yy-mm-dd'
-		});
+		if(!$jinput.hasClass('hasDatepicker')) {
+			$jinput.datepicker({
+				minDate: $jinput.attr('min'),
+				maxDate: $jinput.attr('max'),
+				dateFormat: 'yyyy-mm-dd'
+			});
+		}
 	});
 };
+/*
+$j(document).on('mousedown', 'input[type=date]', function() {
+	alert("on");
+	$j(this).datepicker( {
+		dateFormat: 'yyyy-mm-dd'
+	});
+});
+*/
+
 
 if(!Modernizr.inputtypes.date){
 	$j(document).ready(initDatepicker);

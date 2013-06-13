@@ -141,7 +141,7 @@ public class WebGroup {
 	@RolesAllowed({MyRoles.QP_ADMIN})
 	public Response addGroup(
 			@FormParam("id") String id,
-			@FormParam("active") String active,
+			@FormParam("active") String s_active,
 			@FormParam("custtype") String custtype,
 			@FormParam("company_ministry") String company_ministry,
 			@FormParam("dept_branch") String dept_branch,
@@ -175,6 +175,7 @@ public class WebGroup {
 		int iCustType = -1;
 		int iDaysLeft = -1;
 		int iID = -1;
+		boolean active = false;
 		
 		this.log.error("Group being added");
 		
@@ -208,13 +209,18 @@ public class WebGroup {
 			else 
 				iDaysLeft = -1;
 			
+			// Convert boolean
+			if(s_active.equalsIgnoreCase("on") || s_active.equalsIgnoreCase("true")) {
+				active = true;
+			}
+			
 			
 			
 			user = daoUser.lookupUserById(this.getPrincipal().getUserId());
 			
 			// We set right now for insert and modify date. If we are updating the insert date and
 			//		insert user will simply be ignored.
-			Group group = new Group(iID, Boolean.parseBoolean(active), iCustType,
+			Group group = new Group(iID, active, iCustType,
 					company_ministry, dept_branch, addr1, addr2, city, prov, country, pcode, phone,
 					fax, email, contact_name, contact_phone, contact_email, start_dt, 
 					expiry_dt, new Date(), user, new Date(), user, cust_no, s_package, 

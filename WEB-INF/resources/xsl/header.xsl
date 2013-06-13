@@ -16,22 +16,31 @@
 
 			<script src="/QPDefender/app/none/resources/media/js/modernizr-1.5.min.js"></script>
 			<!-- Webforms2 -->
-			<script src="/QPDefender/app/none/resources/media/webforms2/webforms2-p.js"></script>	
+			<!-- <script src="/QPDefender/app/none/resources/media/webforms2/webforms2-p.js"></script>-->	
 			<!-- jQuery and jQuery UI -->
-			<link rel="stylesheet" href="/QPDefender/app/none/resources/media/ui-themes/aristo/jquery.ui.all.css"/> 
-			<script src="/QPDefender/app/none/resources/media/js/jquery-1.4.3.min.js"></script>
+			<!-- <link rel="stylesheet" href="/QPDefender/app/none/resources/media/ui-themes/aristo/jquery.ui.all.css"/>--> 
+			<!-- <script src="/QPDefender/app/none/resources/media/js/jquery-1.4.3.min.js"></script>-->
+			<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+			<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+			<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"></link>
 			<script>
 				var $j = jQuery.noConflict();
 			</script>
-			<script src="/QPDefender/app/none/resources/media/js/jquery-ui-1.8.5.min.js"></script>
+			<!-- <script src="/QPDefender/app/none/resources/media/js/jquery-ui-1.8.5.min.js"></script>-->
 			<!-- jQuery Numeric Spinner -->	
+			<!-- 
 			<link rel="stylesheet" href="/QPDefender/app/none/resources/media/components/spinner/ui.spinner.css"/> 
 			<script src="/QPDefender/app/none/resources/media/components/spinner/ui.spinner.js"></script>
+			-->
 			<!-- jQuery Color Picker -->
+			<!-- 
 			<link rel="stylesheet" href="/QPDefender/app/none/resources/media/components/colorpicker/colorpicker.css"/>
 			<script src="/QPDefender/app/none/resources/media/components/colorpicker/colorpicker.js"></script>
+			-->
 			<!-- jQuery Placehol -->
+			<!-- 
 			<script src="/QPDefender/app/none/resources/media/components/placeholder/jquery.placehold-0.2.min.js"></script>
+			-->
 			<script src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
 			
 			<!--  Finally our specific css overrides all others. -->

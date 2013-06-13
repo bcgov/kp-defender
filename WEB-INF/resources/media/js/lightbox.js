@@ -134,7 +134,11 @@ lightbox.prototype = {
 		info = "<div id='lbContent'>" + response.responseText + "</div>";
 		new Insertion.Before($('lbLoadMessage'), info)
 		$('lightbox').className = "done";	
-		this.actions();			
+		this.actions();
+		// Added by Spencer to enable HTML 5 date picker.
+		if(!Modernizr.inputtypes.date){
+			window['initDatepicker']();
+		}
 	},
 	
 	// Search through new links within the lightbox, and attach click event

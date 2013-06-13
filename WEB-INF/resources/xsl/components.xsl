@@ -52,7 +52,7 @@
 	<xsl:function name="fun:dateInput">
 		<xsl:param name="elem" as="item()*"/>
 		<xsl:param name="required" as="xsd:boolean"/>
-		<input name="{$elem/name()}" value="{fun:parseDate($elem/text())}" type="date">
+		<input name="{$elem/name()}" value="{fun:parseDate($elem/text())}" min="2001-01-01" max="2050-01-01" type="date">
 			<xsl:if test="$required">
 				<xsl:attribute name="required">required</xsl:attribute>
 			</xsl:if>	
