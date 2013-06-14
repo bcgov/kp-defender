@@ -1,6 +1,7 @@
 package gov.ca.bc.qp.QPDefender.web;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
@@ -81,6 +82,30 @@ public class WebUser {
 	
 	// Get our xslt path for transformations.
 	@PathParam("xsl") public String xsl_global;
+	
+	@POST
+	@Path("/delete")
+	@RolesAllowed(MyRoles.QP_ADMIN)
+	public Response deleteUserAndAccess(@FormParam("userid") String userid) {
+		Response response = null;
+		DAOAccess dao = new DAOAccess();
+		String url = "";
+		try {
+			int i_userid = Integer.parseInt(userid);
+			dao.DeleteUserAndAccessById(i_userid);
+			url = "/QPDefender/app/" + this.xsl_global + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
+			this.getPrincipal().getGroupId();
+			response = Response.seeOther(new URI(url)).build();
+		} catch (DAOException e) {
+			this.log.error("Error accesing data source while deleting user", e);
+			response = Response.serverError().build();
+		} catch (URISyntaxException e) {
+			this.log.warn("URI exception while redirecting from deleting user. URI: " + url, e);
+			response = Response.status(Status.BAD_REQUEST).build();
+		} finally {}
+		return response;
+	}
+	
 	
 	/**
 	 * Allow anyone (that is logged in and belongs to one of the roles defined in 

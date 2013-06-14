@@ -14,16 +14,16 @@
 			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/lightbox.js"/>
 			<link href="/QPDefender/app/none/resources/media/css/lightbox.css" rel="stylesheet" media="screen,projection" type="text/css"/>
 
-			<script src="/QPDefender/app/none/resources/media/js/modernizr-1.5.min.js"></script>
+			<script  type="text/javascript" src="/QPDefender/app/none/resources/media/js/modernizr-1.5.min.js"></script>
 			<!-- Webforms2 -->
 			<!-- <script src="/QPDefender/app/none/resources/media/webforms2/webforms2-p.js"></script>-->	
 			<!-- jQuery and jQuery UI -->
 			<!-- <link rel="stylesheet" href="/QPDefender/app/none/resources/media/ui-themes/aristo/jquery.ui.all.css"/>--> 
 			<!-- <script src="/QPDefender/app/none/resources/media/js/jquery-1.4.3.min.js"></script>-->
-			<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-			<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+			<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+			<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 			<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"></link>
-			<script>
+			<script type="text/javascript">
 				var $j = jQuery.noConflict();
 			</script>
 			<!-- <script src="/QPDefender/app/none/resources/media/js/jquery-ui-1.8.5.min.js"></script>-->
@@ -41,7 +41,7 @@
 			<!-- 
 			<script src="/QPDefender/app/none/resources/media/components/placeholder/jquery.placehold-0.2.min.js"></script>
 			-->
-			<script src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
+			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
 			
 			<!--  Finally our specific css overrides all others. -->
 			<link href="/QPDefender/app/none/resources/media/group.css" rel="stylesheet" type="text/css"/>

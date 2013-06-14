@@ -1,5 +1,6 @@
 package gov.ca.bc.qp.QPDefender.web;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -56,11 +57,12 @@ public class WebResources {
 	@Path("/media/{path:.+}")
 	public Response getResource(@PathParam("path") String path) {
 		Response response = null;
-		MediaType type = QPMediaType.getMediaTypeFromPath(path);
+		String type = QPMediaType.getMediaTypeFromPath(path);
+		log.debug("Accessing type " + type);
 		path = "/media/" + path;
 		InputStream resource = this.getClass().getResourceAsStream(path);
 			// Transform our xsl
-		if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML_TYPE) {
+		if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML) {
 			MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
 			Document document = null;
 			try {
@@ -75,8 +77,8 @@ public class WebResources {
 				log.error("Error while parsing resource", e);
 				response = Response.serverError().build();
 			}
-		} else {
-			response = Response.ok().entity(resource).build();
+		} else {			
+			response = Response.ok(resource, type).build();
 		}
 		return response;
 	}

@@ -50,7 +50,7 @@
 						<xsl:if test="group/id &gt; 0">
 							<div class="addProduct"> 
 								<a href="/QPDefender/app/useraccess/groupid={group/id}/useraccess/empty" class="lbOn">
-									<img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a>
+									<img src="/QPDefender/app/none/resources/media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a>
 							</div>
 							<xsl:apply-templates select="group/users"/>
 						</xsl:if>
@@ -206,7 +206,7 @@
 					    <td>&#160;</td>
 					  </tr>
 					  <tr>
-					    <td><a href="#" onclick="addUser(this)"><img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /></a><a href="#"> Add Product</a></td>
+					    <td><a href="#" onclick="addUser(this)"><img src="/QPDefender/app/none/resources/media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /></a><a href="#"> Add Product</a></td>
 					    <td>&#160;</td>
 					    <td>&#160;</td>
 					    <td>&#160;</td>
@@ -320,7 +320,13 @@
 			<xsl:apply-templates select="productAccess"/>
 			<div class="addProduct"> 
 				<a href="/QPDefender/app/productaccess/userCredId={userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/empty" class="lbOn">
-					<img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add Product</a>
+					<img src="/QPDefender/app/none/resources/media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add Product</a>
+			</div>
+			<div class="deleteUser">
+				<form method="POST" action="/QPDefender/app/group/user/delete">
+					<input type="hidden" name="userid" value="{user/id}"/>
+					<input type="Submit" value="Delete User"/>
+				</form>
 			</div>
 		</xsl:for-each>
 
@@ -366,8 +372,8 @@
 			
 			<div class="controlButtons">
 				<form action="/QPDefender/app/group/productAccess/delete/ID/{userProductsID}" method="post"><input type="submit" value="Delete Product"/></form>
-				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="media/images/remove.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
-				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/roles/userrole/empty" class="lbOn"><img src="media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
+				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="/QPDefender/app/none/resources/media/images/remove.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
+				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/roles/userrole/empty" class="lbOn"><img src="/QPDefender/app/none/resources/media/images/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
 			</div>
 		</div>
 	</xsl:template>

@@ -30,6 +30,26 @@ public class DAOAccess extends DAOSecurity {
 	Logger log = Logger.getLogger(this.getClass());
 
 	/**
+	 * Deletes a user and all the access that is assigned to them.
+	 * @param userid Unique identifier for this user.
+	 * @throws DAOException An error occurred when accessing our data source.
+	 */
+	public void DeleteUserAndAccessById(int userid) throws DAOException {
+		Connection con = null;
+		CallableStatement stmt = null;
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareCall("{call DeleteUserById(?)}");
+			stmt.setInt(1, userid);
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}			
+		}
+	}
+	/**
 	 * Adds or updates a user and it's credential components.
 	 * @param access	A User and all their associated access information.
 	 * @throws DAOException Error occurred while accessing our data source.
