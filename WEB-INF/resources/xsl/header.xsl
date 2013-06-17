@@ -44,7 +44,7 @@
 			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
 			
 			<!--  Finally our specific css overrides all others. -->
-			<link href="/QPDefender/app/none/resources/media/group.css" rel="stylesheet" type="text/css"/>
+			<link href="/QPDefender/app/none/resources/media/css/group.css" rel="stylesheet" type="text/css"/>
 			<!-- TO faciliate our overlay -->
 			<!--
 			<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>-->

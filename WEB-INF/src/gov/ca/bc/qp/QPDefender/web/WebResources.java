@@ -11,6 +11,7 @@ import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,16 +55,25 @@ public class WebResources {
 	@PathParam("xsl") public String xsl_global;
 	
 	
+	/**
+	 * Takes care of all access to the media folder. Any resource in the media folder is accessible by clients.
+	 * @param path	Path under the media directory to our resource.
+	 * @return	Response with the entity representation our the resource or a 404 error if not found.
+	 */
 	@GET
 	@Path("/media/{path:.+}")
+	@PermitAll
 	public Response getResource(@PathParam("path") String path) {
 		Response response = null;
 		String type = QPMediaType.getMediaTypeFromPath(path);
-		log.debug("Accessing type " + type);
+		log.debug("Accessing resource " + path + " of type " + type);
 		path = "/media/" + path;
 		InputStream resource = this.getClass().getResourceAsStream(path);
-			// Transform our xsl
-		if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML) {
+		// If our resource cannot be found, return 404 error
+		if(resource == null) {
+			log.warn("Resource not found:" + path);
+			response = Response.status(Status.NOT_FOUND).build();
+		} else if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML) {
 			MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
 			Document document = null;
 			try {
