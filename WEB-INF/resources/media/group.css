@@ -293,16 +293,13 @@ input[type="reset"] {
 	cursor:pointer;
 	padding: 2px;	
 }
+.controlButtons {
+	float: right;
+}
 .controlButtons a  {
 	color: #069;
 	text-decoration: none;
 	font-weight: bold;
-	float: left;
-	margin-top:20px;
-	margin-left: 20px;
-}
-table.productSpecs a.lbOn {
-	padding-right: 20px;
 }
 div#lightbox {
 	padding: 20px;
