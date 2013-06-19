@@ -373,7 +373,7 @@
 			
 			<div class="controlButtons">
 				<form action="/QPDefender/app/group/productAccess/delete/ID/{userProductsID}" method="post"><input type="submit" value="Delete Product"/></form>
-				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/remove.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
+				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/edit.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
 				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/roles/userrole/empty" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
 			</div>
 		</div>
