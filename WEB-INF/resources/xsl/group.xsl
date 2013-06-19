@@ -318,16 +318,17 @@
 		<xsl:for-each select="useraccess">
 			<xsl:apply-templates select="self::useraccess"/>
 			<xsl:apply-templates select="productAccess"/>
-			<div class="addProduct"> 
+			<div class="addProduct">
+				<div class="deleteUser">
+					<form method="POST" action="/QPDefender/app/group/user/delete">
+						<input type="hidden" name="userid" value="{user/id}"/>
+						<input type="Submit" value="Delete User"/>
+					</form>
+				</div> 
 				<a href="/QPDefender/app/productaccess/userCredId={userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/empty" class="lbOn">
 					<img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add Product</a>
 			</div>
-			<div class="deleteUser">
-				<form method="POST" action="/QPDefender/app/group/user/delete">
-					<input type="hidden" name="userid" value="{user/id}"/>
-					<input type="Submit" value="Delete User"/>
-				</form>
-			</div>
+
 		</xsl:for-each>
 
 	</xsl:template>

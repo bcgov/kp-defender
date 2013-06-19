@@ -146,6 +146,11 @@ public abstract class WebInterface {
 		return response;
 	}
 	
+	public Response getResponse(String redirectURL) {
+		Response response = null;
+		return response;
+	}
+	
 	/**
 	 * Creates a response from a bean based on context resolver rules for the project.
 	 * @param bean	The bean to wrap in a response.

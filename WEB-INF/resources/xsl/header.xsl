@@ -10,11 +10,12 @@
 			
 			<title><xsl:value-of select="$title"/></title>
 			<!--  Following is to enable lightbox functionality -->
+			
 			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/prototype.js"/>
 			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/lightbox.js"/>
 			<link href="/QPDefender/app/none/resources/media/css/lightbox.css" rel="stylesheet" media="screen,projection" type="text/css"/>
-
-			<script  type="text/javascript" src="/QPDefender/app/none/resources/media/js/modernizr-1.5.min.js"></script>
+			
+			<script  type="text/javascript" src="/QPDefender/app/none/resources/media/js/modernizr-latest.js"></script>
 			<!-- Webforms2 -->
 			<!-- <script src="/QPDefender/app/none/resources/media/webforms2/webforms2-p.js"></script>-->	
 			<!-- jQuery and jQuery UI -->
@@ -41,6 +42,8 @@
 			<!-- 
 			<script src="/QPDefender/app/none/resources/media/components/placeholder/jquery.placehold-0.2.min.js"></script>
 			-->
+			<!--  Following required for fallback html5 behaviour -->
+			<script type="text/javascript" src="/QPDefender/app/none/resources/media/components/placeholder/jquery.placehold-0.2.min.js"/>
 			<script type="text/javascript" src="/QPDefender/app/none/resources/media/js/html5forms.fallback.js"></script>	
 			
 			<!--  Finally our specific css overrides all others. -->

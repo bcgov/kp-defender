@@ -1,7 +1,9 @@
 package gov.ca.bc.qp.QPDefender.web;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
@@ -83,6 +85,7 @@ public class WebUser {
 	// Get our xslt path for transformations.
 	@PathParam("xsl") public String xsl_global;
 	
+	
 	@POST
 	@Path("/delete")
 	@RolesAllowed(MyRoles.QP_ADMIN)
@@ -93,13 +96,17 @@ public class WebUser {
 		try {
 			int i_userid = Integer.parseInt(userid);
 			dao.DeleteUserAndAccessById(i_userid);
-			url = "/QPDefender/app/" + this.xsl_global + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
-			this.getPrincipal().getGroupId();
-			response = Response.seeOther(new URI(url)).build();
+			String redirect = this.xsl_global;
+			// Construct our redirection string.
+			redirect = this.xsl_global + "/msg=" + URLEncoder.encode("User Deleted", "UTF-8");
+			// We are going to redirect to the new group that was created using the same xsl to render the content.
+			url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
+			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
+			response = Response.seeOther(redirectURI).build();
 		} catch (DAOException e) {
 			this.log.error("Error accesing data source while deleting user", e);
 			response = Response.serverError().build();
-		} catch (URISyntaxException e) {
+		} catch (UnsupportedEncodingException e) {
 			this.log.warn("URI exception while redirecting from deleting user. URI: " + url, e);
 			response = Response.status(Status.BAD_REQUEST).build();
 		} finally {}
@@ -313,6 +320,23 @@ public class WebUser {
 		
 		return response;
 		
+	}
+	
+	public static void main(String[] args) throws UnsupportedEncodingException, URISyntaxException {
+		URI uri = new URI("http", null,
+				"localhost", 8080,
+				"/QPDefender/app/group/msg=User Deleted/groups/ID/1", null, null);
+		String url = uri.toASCIIString();
+		System.out.println(url);
+		
+		URI uri2 = new URI(
+		        "http", 
+		        "www.google.com", 
+		        "/ig/api",
+		        "weather=São Paulo",
+		        null);
+		String request = uri2.toASCIIString();
+		System.out.println(request);
 	}
 	
 	

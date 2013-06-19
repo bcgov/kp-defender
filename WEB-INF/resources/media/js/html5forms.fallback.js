@@ -69,7 +69,7 @@ var initDatepicker = function() {
 			$jinput.datepicker({
 				minDate: $jinput.attr('min'),
 				maxDate: $jinput.attr('max'),
-				dateFormat: 'yyyy-mm-dd'
+				dateFormat: 'yy-mm-dd'
 			});
 		}
 	});
