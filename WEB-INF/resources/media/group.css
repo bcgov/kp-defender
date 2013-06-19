@@ -129,6 +129,13 @@ body {
 
 input[type="button"] {
 	margin-right:0;
+	padding: 2px;
+	cursor:pointer;
+}
+button {
+	margin-right:0;
+	padding: 2px;
+	cursor:pointer;
 }
 
 input {
