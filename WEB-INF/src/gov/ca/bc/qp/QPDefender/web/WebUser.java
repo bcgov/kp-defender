@@ -259,7 +259,7 @@ public class WebUser {
 			@FormParam("email") String email,
 			@FormParam("credentialType") String credTypeId,
 			@FormParam("credential") String credential,
-			@FormParam("credential") String credential2,
+			@FormParam("credential2") String credential2,
 			@FormParam("userid") String userid,
 			@FormParam("groupid") String groupid,
 			@FormParam("meta") String meta) {
