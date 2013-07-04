@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 public class CredentialType implements QPBean {
 
 	// Private member variables.
+    // comment
 	private int id = -1;
 	private String type = "";
 	private String Description = "";
