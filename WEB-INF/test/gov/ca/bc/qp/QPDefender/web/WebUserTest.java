@@ -6,10 +6,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
 import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil   {
@@ -29,7 +29,7 @@ public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil
 		web.setPrincipal(principal);
 		
 		// Set our XSLT to none.
-		web.xsl_global = MyResolver.NO_TRANSFORM;
+		web.xsl = DefaultResolver.NO_TRANSFORM;
 		
 		QPMarshaller marshaller = new QPMarshaller();
 		UserCredentials uc_before = null;
@@ -41,17 +41,17 @@ public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil
 		 */
 		try {
 			// Lookup our credentials.
-			uc_before = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation().getEntity(), new UserCredentials());
+			uc_before = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation(null, null).getEntity(), new UserCredentials());
 			// Update them.
 			web.updateCredentials(changedCredential, changedCredential, null, null);
 			// Look them up again
-			uc_after = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation().getEntity(), new UserCredentials());
+			uc_after = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation(null, null).getEntity(), new UserCredentials());
 			// ensure they have changed
 			Assert.assertNotSame(uc_before.getCredential(), uc_after.getCredential());
 			// update them back to the way they were
 			web.updateCredentials(startingCredential, startingCredential, null, null);
 			// Look them up again
-			uc_after = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation().getEntity(), new UserCredentials());
+			uc_after = (UserCredentials) marshaller.unmarshal((Document)web.getMyInformation(null, null).getEntity(), new UserCredentials());
 			// Ensure we're back to the same
 			Assert.assertTrue(uc_after.isEqual(uc_before));
 			

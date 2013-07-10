@@ -21,6 +21,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -39,12 +40,16 @@ public class WebGroupProduct extends WebInterface {
 	@GET
 	@Path("/groupid/{id}")
 	@RolesAllowed({MyRoles.QP_ADMIN})
-	public Response getGroupProducts(@PathParam("id") String groupid) {
+	public Response getGroupProducts(
+			@PathParam("id") String groupid,
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		DAOGroupProduct dao = new DAOGroupProduct();
 		int iGroupid = Integer.parseInt(groupid);
 		Response response = null;
 		try {
-			response = this.getResponse(dao.lookupGroupProductByGroupId(iGroupid));
+			response = this.getResponse(
+					dao.lookupGroupProductByGroupId(iGroupid), optional_xsl, optional_Return_URI, null);
 		} catch (DAOException e) {
 			log.error("Exception occurred when looking up group products for group " + groupid, e);
 			response = Response.serverError().build();
@@ -59,8 +64,11 @@ public class WebGroupProduct extends WebInterface {
 	@GET
 	@Path("/groupid/me")
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
-	public Response getGroupProducts() {
-		return this.getGroupProducts(Integer.toString(this.getPrincipal().getGroupId()));
+	public Response getGroupProducts(@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
+		return this.getGroupProducts(
+				Integer.toString(this.getPrincipal().getGroupId()),
+				optional_xsl, optional_Return_URI);
 	}
 	
 	/**
@@ -71,19 +79,22 @@ public class WebGroupProduct extends WebInterface {
 	@GET
 	@Path("ID/{id}")
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
-	public Response getGroupProductById(@PathParam("id") String gpid) {
+	public Response getGroupProductById(@PathParam("id") String gpid, 
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		// TODO: Security risk, ensure if the principal has a role of security group admin they cannot access group
 		//			products outside of their own group.
 		DAOGroupProduct dao = new DAOGroupProduct();
 		int iGPid = Integer.parseInt(gpid);
 		Response response = null;
 		try {
-			response = this.getResponse(dao.lookupGroupProductById(iGPid));
+			response = this.getResponse(dao.lookupGroupProductById(iGPid),
+					optional_xsl, optional_Return_URI, null);
 		} catch (DAOException e) {
 			log.error("An exception occurred when looking up group product " + gpid, e);
 			response = Response.serverError().build();
 		} catch (ObjectNotFoundException e) {
-			response = this.getEmpty();
+			response = this.getEmpty(optional_xsl, optional_Return_URI);
 		}
 		return response;
 	}
@@ -106,7 +117,9 @@ public class WebGroupProduct extends WebInterface {
 			@FormParam("groupid") String groupid,
 			@FormParam("productType") String productid,
 			@FormParam("concurrent") String concurrent,
-			@FormParam("expiryDate") String expiryDate) {
+			@FormParam("expiryDate") String expiryDate, 
+			@FormParam("xsl") String optional_xsl, 
+			@FormParam("return_URI") String optional_Return_URI) {
 		
 		Response response = null;
 		
@@ -116,13 +129,14 @@ public class WebGroupProduct extends WebInterface {
 		int iConcurrent = Integer.parseInt(concurrent);
 		DAOProducts daoP = new DAOProducts();
 		DAOGroup daoGroup = new DAOGroup();
+		String[] messages;
 		// We'll add a update parameter to our xsl.
-		String redirect = this.xsl;
+		//String redirect = this.xsl;
 		try {
 			// First we check to see if this user already has access to this product. If so, return message
 			//		informing the group that the cannot add products they already have access to.
 			if(iId < 0 && daoGroup.isProductAssociatedToGroup(iProductId, iGroupId)) {
-				redirect = xsl + "/msg=" + URLEncoder.encode("Error Product was not added Group already has access", "UTF-8");
+				messages = new String[]{"Error Product was not added Group already has access"};
 			} else {
 				Date dExpiry = sdf.parse(expiryDate);
 				Product p = daoP.lookupProductById(iProductId);
@@ -133,25 +147,25 @@ public class WebGroupProduct extends WebInterface {
 				// If the id of this group is -1 it means we're adding a new group. If not we're updating.
 				if(iId == -1) {
 					// Add our addition feedback.
-					redirect = xsl + "/msg=" + URLEncoder.encode("Product Added", "UTF-8");
+					messages = new String[]{"Product Added"};
 				} else {
 					// Add our update feedback.
-					redirect = xsl + "/msg=" + URLEncoder.encode("Product Updated", "UTF-8");
+					messages = new String[]{"Product Updated"};
 				}
 			}
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
+			/*
 			String url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(iGroupId);
 			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
 			response = Response.seeOther(redirectURI).build();
+			*/
+			this.getResponse(optional_Return_URI, messages);
 		} catch (DAOException e) {
 			log.error("Error accessing our Data Source when adding group product: " + id, e);
 			response = Response.serverError().build();
 		} catch (ParseException e) {
 			log.error("Error when adding group product while parsing date:" + expiryDate, e);
 			response = Response.serverError().build();
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Error when redirecting after group product addition", e);
-			response = Response.status(Status.BAD_REQUEST).build();
 		} finally{}
 		
 		
@@ -168,19 +182,24 @@ public class WebGroupProduct extends WebInterface {
 	@GET
 	@Path("delete/{id}")
 	@RolesAllowed({MyRoles.QP_ADMIN})
-	public Response deleteGroup(@PathParam("id") String id) {
+	public Response deleteGroup(@PathParam("id") String id,
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		DAOGroupProduct dao = new DAOGroupProduct();
 		Response response = null;
+		String[] messages;
 		try {
 			dao.deleteGroupProduct(Integer.parseInt(id));
-			String redirect = xsl + "/msg=" + URLEncoder.encode("Product Access Deleted", "UTF-8");
+			messages = new String[]{"Product Access Deleted"};
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
-			String url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
-			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
-			response = Response.seeOther(redirectURI).build();
+			//String url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
+			//URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
+			//response = Response.seeOther(redirectURI).build();
+			response = this.getResponse(optional_Return_URI, messages);
+		/*
 		} catch (UnsupportedEncodingException e) {
 			log.warn("Encoding exception when deleting group " + id, e);
-			response = Response.status(Status.BAD_REQUEST).build();
+			response = Response.status(Status.BAD_REQUEST).build(); */
 		} catch (NumberFormatException e) {
 			log.warn("Number formatting exception when deleteing group " + id, e);
 			response = Response.status(Status.BAD_REQUEST).build();
@@ -198,8 +217,10 @@ public class WebGroupProduct extends WebInterface {
 	@GET
 	@Path("empty")
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
-	public Response getEmpty() {
-		return this.getResponse(new GroupProduct());
+	public Response getEmpty(
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
+		return this.getResponse(new GroupProduct(), optional_xsl, optional_Return_URI, null);
 	}
 
 	@Override

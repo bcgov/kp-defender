@@ -13,9 +13,10 @@ import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.DAO.DAOCustType;
 import gov.ca.bc.qp.QPDefender.beans.CustType;
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
@@ -24,6 +25,7 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -42,27 +44,30 @@ import org.w3c.dom.Document;
  * @author spencer.tickner
  */
 @Path("{xsl:.+}/custtype")
-public class WebCustType {
+public class WebCustType extends WebInterface {
 
 	Logger log = Logger.getLogger(getClass());
 	
 	// Grab our context to get our principal.
+	/*
 	@Context private SecurityContext securityContext;
 	@Context private HttpHeaders header;
 	@Context private UriInfo uriInfo;
-	
+	*/
 	
 	/**
 	 * Helper method for ensuring we don't get null pointers if running outside a 
 	 * 	security context.
 	 * @return	A object representing the user accessing this interface.
 	 */
+	/*
 	public QPPrincipal getPrincipal() {
 		QPPrincipal principal = null;
 		if(securityContext != null)
 			principal = (QPPrincipal)securityContext.getUserPrincipal();
 		return principal;
 	}
+	*/
 	
 	// Get our xslt path for transformations.
 	@PathParam("xsl") public String xsl_global;
@@ -74,37 +79,50 @@ public class WebCustType {
 	@GET
 	@Path("all")
 	@PermitAll
-	public Response getCustTypes() {
+	public Response getCustTypes(@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		Response response = null;
-		Document doc = null;
 		DAOCustType dao = new DAOCustType();
+		/*
+		Document doc = null;
+		
 		MediaType type = MediaType.APPLICATION_XML_TYPE;
+		 */
 		try {
 			List<CustType> custType = dao.getAllCustType();
+			response = this.getResponse(custType, optional_xsl, optional_Return_URI, null);
+			/*
 			QPMarshaller marshaller = new QPMarshaller();
 			doc = marshaller.marshalToDomWrapped(custType, "types");
-			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), uriInfo);
+			if(!xsl_global.equals(DefaultResolver.NO_TRANSFORM)) {
+				XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
-				doc = trans.transform(doc, resolver.getParams());
+				doc = trans.transform(doc, resolver.getParams(null));
 				type = MediaType.TEXT_HTML_TYPE;
 			}
 			response = Response.ok().entity(doc).type(type).build();
-			
+			*/
+		/*	
 		} catch (ParserConfigurationException e) {
 			log.error("Parsing exception while looking up Customer Types", e);
 			response = Response.serverError().build();
 		} catch (JAXBException e) {
 			log.error("JAXB exception while looking up Customer Types", e);
-			response = Response.serverError().build();
+			response = Response.serverError().build();*/
 		} catch (DAOException e) {
 			log.error("Exception accessing data source while looking up Customer Types", e);
 			response = Response.serverError().build();
-		} catch (TransformerException e) {
+		/*} catch (TransformerException e) {
 			log.error("Transformation exception while looking up Customer Types", e);
-			response = Response.serverError().build();
+			response = Response.serverError().build();*/
 		} finally {}
 		
 		return response;
+	}
+
+	@Override
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		return this.log;
 	}
 }

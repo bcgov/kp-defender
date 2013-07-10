@@ -9,13 +9,20 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
+import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.beans.CredentialType;
+import gov.ca.bc.qp.QPDefender.config.ExternalResolver;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
@@ -57,6 +64,9 @@ public abstract class WebInterface {
 	
 	// This must be protected to implementing classes have access
 	protected static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+	
+	// Name of the parameter we add any messages to.
+	private static final String PARAM_MSG = "msg";
 		
 	// Grab our context to get our principal.
 	// TODO: Change these to private once we moved all interface classes to extending this class.
@@ -66,6 +76,37 @@ public abstract class WebInterface {
 	
 	// Private member variable.
 	protected QPPrincipal principal = null;
+	private String optional_xsl = null;
+	private String optional_Return_URI = null;
+	
+	/**
+	 * @return An optional xsl parameter for overriding our xsl path parameter. Used when accessing project from an external project.
+	 */
+	private String getOptionalXsl() {
+		return this.optional_xsl;
+	}
+	/**
+	 * @param optional_xsl An optional xsl parameter for overriding our xsl path parameter. Used when accessing project from an external project.
+	 */
+	private void setOptionalXsl(String optional_xsl) {
+		if(optional_xsl == null)
+			optional_xsl = "";
+		this.optional_xsl = optional_xsl;
+	}
+	/**
+	 * @return An optional parameter for redirecting the user to a separate URL. The URL is relative to the domain. 
+	 */
+	private String getOptionalReturnURI() {
+		return this.optional_Return_URI;
+	}
+	/**
+	 * @param optional_Return_URI An optional parameter for redirecting the user to a separate URL. The URL is relative to the domain.
+	 */
+	private void setOptionalReturnURI(String optional_Return_URI) {
+		if(optional_Return_URI == null)
+			optional_Return_URI = "";
+		this.optional_Return_URI = optional_Return_URI;
+	}
 	
 	/**
 	 * @param principal The entity accessing this resource. This set method is a convenience method for
@@ -97,25 +138,58 @@ public abstract class WebInterface {
 	 * @return			A response object with entity, type and status set.
 	 * @throws TransformerException Error occurred while transforming our source document.
 	 */
-	public Response getResponse(Document source) {
+	public Response getResponse(Document source, String optional_xsl, String optional_Return_URI, String[] messages) {
+		
+		// set our private member variables
+		this.setOptionalXsl(optional_xsl);
+		this.setOptionalReturnURI(optional_Return_URI);
+		
 		MediaType type = MediaType.TEXT_XML_TYPE;
 		Response response = null;
-		if(!xsl.equals(DefaultResolver.NO_TRANSFORM)) {
-			DefaultResolver resolver = new DefaultResolver(xsl, this.getPrincipal(), uriInfo, me);
-			try {
+		// Create a resolver
+		XSLTResolver resolver = null;
+		// If our xsl is our default keyword for no transform, or we have no source, skip resolving.
+		try {
+			if(!(xsl.equals(DefaultResolver.NO_TRANSFORM) || source == null)) {
+
+				if(this.getOptionalXsl() != "") {
+					resolver = new ExternalResolver(this.getOptionalXsl(),
+							this.getPrincipal(), uriInfo, me);
+				} else {
+					resolver = new DefaultResolver(xsl, this.getPrincipal(), uriInfo, me);
+				}
+
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
-				byte[] content = trans.transformToByteArray(source, resolver.getParams());
+				byte[] content = trans.transformToByteArray(source, resolver.getParams(messages));
 				type = MediaType.TEXT_HTML_TYPE;
+					
 				response = Response.ok().entity(content).type(type).build();
-			} catch (TransformerException e) {
-				this.getLogger().error("XSLT exception occurred for " + this.xsl, e);
-				response = Response.serverError().build();
-			} finally {}
-		} else {
-			response = Response.ok().entity(source).type(type).build();
-		}
+				
+			} else {
+				response = Response.ok().entity(source).type(type).build();
+			}
+			
+			// OK, if an optional redirect url was passed in we ignore everything we just did and redirect
+			//		to the new url.
+			if(!this.getOptionalReturnURI().equals("")) {
+				URI redirectURI = null;
+				// TODO: Review resolver as null, is this the best way to do this?
+				if(resolver == null) {
+					resolver = new DefaultResolver(DefaultResolver.NO_TRANSFORM, null, null, null);
+				} 
+				redirectURI = this.uriInfo.getBaseUri().resolve(resolver.createParamatizedURL(this.getOptionalReturnURI(), messages));
+				response = Response.seeOther(redirectURI).build();
+			}
+		} catch (TransformerException e) {
+			this.getLogger().error("XSLT exception occurred for " + this.xsl, e);
+			response = Response.serverError().build();
+		} catch (IOException e) {
+			this.getLogger().error("Unable to resolve external xsl " + optional_xsl, e);
+			response = Response.serverError().build();
+		} finally {}
 		return response;
 	}
+
 	
 	/**
 	 * Creates a response from a list of beans based on context resolver rules for the project. 
@@ -123,7 +197,7 @@ public abstract class WebInterface {
 	 * @param beans A list of beans to resolve.
 	 * @return		A response representing the list of beans, or an response representing an exception if one occurs.
 	 */
-	public Response getResponse(List<? extends QPBean> beans)  {
+	public Response getResponse(List<? extends QPBean> beans, String optional_xsl, String optional_Return_URI, String[] messages)  {
 		Document doc = null;
 		Response response = null;
 		if(beans.size() > 0) {
@@ -132,7 +206,7 @@ public abstract class WebInterface {
 			QPMarshaller marshaller = new QPMarshaller();
 			try {
 				doc = marshaller.marshalToDomWrapped(beans, wrapper);
-				response = this.getResponse(doc);
+				response = this.getResponse(doc, optional_xsl, optional_Return_URI, messages);
 			} catch (ParserConfigurationException e) {
 				this.getLogger().error("Parsing Exception marshalling list " + wrapper, e);
 				response = Response.serverError().build();
@@ -146,23 +220,36 @@ public abstract class WebInterface {
 		return response;
 	}
 	
-	public Response getResponse(String redirectURL) {
+	/**
+	 * After performing a post we may want to simply redirect to a success page. Use this method.
+	 * @param redirectURL	The url to redirect to (/whatever/app/etc)
+	 * @param messages		Any 
+	 * @return
+	 */
+	public Response getResponse(String redirectURL, String[] messages) {
 		Response response = null;
+		Document source = null;
+		response = this.getResponse(source, null, redirectURL, messages);
 		return response;
 	}
 	
 	/**
 	 * Creates a response from a bean based on context resolver rules for the project.
 	 * @param bean	The bean to wrap in a response.
+	 * @param optional_xsl An optional xsl for transforming the resulting xml document that overrides the xsl set in the path. Used
+	 * 							mainly for external projects accessing this api.
+	 * @param optional_Return_URI An optional parameter for redirecting the response to a location of api consumers choice.
+	 * @param messages An array of system generated messages that will be passed to any xsl transformation that is invoked on success 
+	 * 						of the transaction as a parameter named msg.
 	 * @return A response representing the bean or a response representing an exception if one occurs.
 	 */
-	public Response getResponse(QPBean bean) {
+	public Response getResponse(QPBean bean, String optional_xsl, String optional_Return_URI, String[] messages) {
 		Document doc = null;
 		Response response = null;
 		QPMarshaller marshaller = new QPMarshaller();
 		try {
 			doc = marshaller.marshalToDom(bean);
-			response = this.getResponse(doc);
+			response = this.getResponse(doc, optional_xsl, optional_Return_URI, messages);
 		} catch (ParserConfigurationException e) {
 			this.getLogger().error("Parsing Exception marshalling bean " + bean.getClass().getSimpleName(), e);
 			response = Response.serverError().build();
@@ -171,6 +258,31 @@ public abstract class WebInterface {
 			response = Response.serverError().build();
 		}
 		return response;
+	}
+	
+	/**
+	 * Checks to see if this username already exists in the database. If the id is -1 this
+	 * will return true if the username exists. If the id is not -1 it checks to see if another
+	 * username exists in the database with a DIFFERENT id. If the id is the same it returns false,
+	 * even though a username does exist in the database (ie the user with this id).
+	 * @param username	English representation of a unique user.
+	 * @param id		Unique identifier for this user.
+	 * @return			Whether or not the username exists in the database who ISN'T that user.
+	 * @throws DAOException An error occurred while accessing our data source.
+	 */
+	public boolean usernameExists(String username, int id) throws DAOException {
+		boolean exists = false;
+		DAOUser daoUser = new DAOUser();
+		User user = daoUser.LookupUserByName(username);
+		if(user == null) {
+			exists = false;
+		} else {
+			if(id == -1)
+				exists = true;
+			else if(id != user.getId())
+				exists = true;
+		}
+		return exists;
 	}
 	
 	/**

@@ -2,7 +2,7 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import java.net.URL;
 
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
 import gov.ca.bc.qp.qpcommon.dom.QPSchemaValidator;
 import gov.ca.bc.qp.qpcommon.dom.ValidationException;
 
@@ -24,7 +24,7 @@ public class WebProductTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestU
 	public void testGetProducts() {
 		WebProduct product = new WebProduct();
 		// Suppress transformation
-		product.xsl = MyResolver.NO_TRANSFORM;
+		product.xsl = DefaultResolver.NO_TRANSFORM;
 		Response response = product.getProducts();
 		Document doc = (Document)response.getEntity();
 		URL xsd = WebProductTest.class.getResource("/schema/products.xsd");
@@ -41,7 +41,7 @@ public class WebProductTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestU
 	public void testGetProductById() {
 		WebProduct product = new WebProduct();
 		// Suppress transformation
-		product.xsl = MyResolver.NO_TRANSFORM;
+		product.xsl = DefaultResolver.NO_TRANSFORM;
 		Response response = product.getProductById("1");
 		Document doc = (Document)response.getEntity();
 		URL xsd = WebProductTest.class.getResource("/schema/product.xsd");

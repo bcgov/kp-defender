@@ -33,6 +33,7 @@
 					<form name="addProductAccess" action="/QPDefender/app/group/productAccess/userproduct/add" method="post">
 						<input type="hidden" name="userCredId" value="{$userCredId}"/>
 						<input type="hidden" name="userProductId" value="{productAccess/userProductsID}"/>
+						<input type="hidden" name="return_URI" value="/QPDefender/app/group/groups/ID/{$groupid}"/>
 						<table width="539" border="0" class="productSpecs">
 						  <tr class="thead">
 						    <td>Product</td>
@@ -68,11 +69,23 @@
 
 	<xsl:function name="fun:getGroupProductCombo">
 		<xsl:param name="me"/>
-		<select name="groupProductId" required="true" onchange="switchTimeout(this)">
+		<!-- See bug below -->
+		<xsl:if test="$me/userProductsID != -1">
+			<input type="hidden" name="groupProductId" value="{$groupProductDoc/GroupProducts/groupproduct[product/id = $productid]/id}"/>
+		</xsl:if>
+		<select required="true" onchange="switchTimeout(this)">
 			<!-- Disable select box if user is editing to ensure a user can't have multiple accesses to the same product -->
-			<xsl:if test="$me/userProductsID != -1">
-				<xsl:attribute name="disabled">true</xsl:attribute>
-			</xsl:if>
+			<!-- Strange bug, when inputs are disabled they view as null to jax-rs. Do a switch to change the name and let 
+					the hidden input take care of passing the info instead. -->
+			<xsl:choose>
+				<xsl:when test="$me/userProductsID != -1">
+					<xsl:attribute name="disabled">true</xsl:attribute>
+					<xsl:attribute name="name">dummy</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="name">groupProductId</xsl:attribute>			
+				</xsl:otherwise>
+			</xsl:choose>
 			<option value="">Please Select</option>
 			<xsl:for-each select="$groupProductDoc/GroupProducts/groupproduct">
 				<option value="{id}">

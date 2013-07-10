@@ -5,7 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 

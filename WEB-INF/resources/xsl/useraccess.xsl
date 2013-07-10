@@ -79,6 +79,7 @@
 					  </td>
 				</tr>
 	          </table>
+	          <input type="hidden" name="return_URI" value="/QPDefender/app/group/groups/me"/>
 			  <input type="submit" value="Submit"/>
 	        </div>
 	   </form>		

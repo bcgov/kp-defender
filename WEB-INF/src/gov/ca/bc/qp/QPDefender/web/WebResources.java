@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.QPDefender.utility.QPMediaType;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
@@ -73,8 +74,8 @@ public class WebResources {
 		if(resource == null) {
 			log.warn("Resource not found:" + path);
 			response = Response.status(Status.NOT_FOUND).build();
-		} else if(!xsl_global.equals(MyResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML) {
-			MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
+		} else if(!xsl_global.equals(DefaultResolver.NO_TRANSFORM) && type == MediaType.TEXT_XML) {
+			XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), this.uriInfo, this);
 			Document document = null;
 			try {
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);

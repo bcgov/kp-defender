@@ -14,6 +14,7 @@ import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
@@ -33,11 +34,13 @@ public class WebCredentialType extends WebInterface {
 	@GET
 	@Path("all")
 	@PermitAll
-	public Response getCredentialTypes() {
+	public Response getCredentialTypes(
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		DAOCredentialType dao = new DAOCredentialType();
 		Response response = null;
 		try {
-			response = this.getResponse(dao.getAllCredentialTypes());
+			response = this.getResponse(dao.getAllCredentialTypes(), optional_xsl, optional_Return_URI, null);
 		} catch (DAOException e) {
 			log.error("Exception accessing our database for credential types", e);
 			response = Response.serverError().build();

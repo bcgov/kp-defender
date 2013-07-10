@@ -1,16 +1,13 @@
 package gov.ca.bc.qp.QPDefender.DAO;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
-import gov.ca.bc.qp.QPDefender.beans.ProductAccess;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil;
-import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;

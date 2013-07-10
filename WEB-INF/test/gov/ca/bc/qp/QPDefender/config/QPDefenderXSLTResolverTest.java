@@ -11,6 +11,8 @@ import junit.framework.Assert;
 
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 
 import org.junit.Test;
 
@@ -32,16 +34,16 @@ public class QPDefenderXSLTResolverTest {
 		// Placeholder for this test.
 		UserMetaData ud = new UserMetaData("namespace:name=>value");
 		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), ud, 1, 1, 1);
-		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
+		XSLTResolver resolver = new DefaultResolver(unresolvedPath, principal, null, this);
 
 		// Ensure our xslt is resolving
 		File f = this.getFile(resolver.getURL());
 		Assert.assertTrue(f.exists());
 		Assert.assertNotNull(resolver.getSource());
 		// Ensure our roles are getting into our params
-		Map<String, String> params = resolver.getParams();
+		Map<String, Object> params = resolver.getParams();
 		Assert.assertEquals(1, params.size());
-		Assert.assertEquals(params.get(MyResolver.ROLE_PARAM_NAME), "manager,student");
+		Assert.assertEquals(params.get(DefaultResolver.ROLE_PARAM_NAME), "manager,student");
 		
 	}
 
@@ -51,7 +53,7 @@ public class QPDefenderXSLTResolverTest {
 		// Placeholder for this test.
 		UserMetaData ud = new UserMetaData("namespace:name=>value");
 		QPPrincipal principal = new QPPrincipal("spencer", this.getRoles(), ud, 1, 1, 1);
-		MyResolver resolver = new MyResolver(unresolvedPath, principal, null);
+		XSLTResolver resolver = new DefaultResolver(unresolvedPath, principal, null, this);
 
 		// Ensure our xslt is resolving
 		File f = this.getFile(resolver.getURL());
@@ -59,7 +61,7 @@ public class QPDefenderXSLTResolverTest {
 		Assert.assertNotNull(resolver.getSource());
 		
 		// Ensure our parameters are getting through
-		Map<String, String> params = resolver.getParams();
+		Map<String, Object> params = resolver.getParams();
 		Assert.assertEquals(3, params.size()); // Should have one more than passed in because of roles.
 		Assert.assertEquals("value1", params.get("param1"));
 		Assert.assertEquals("value2", params.get("param2"));

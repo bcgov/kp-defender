@@ -12,20 +12,15 @@ package gov.ca.bc.qp.QPDefender.web;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -34,11 +29,11 @@ import javax.xml.transform.TransformerException;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
@@ -104,8 +99,8 @@ public class WebProduct extends WebInterface {
 			// Marshal them with a wrapper.
 			Document document = marshaller.marshalToDomWrapped(products, "products");
 			// Transform our xsl
-			if(!this.xsl.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl, this.getPrincipal(), this.uriInfo);
+			if(!this.xsl.equals(DefaultResolver.NO_TRANSFORM)) {
+				XSLTResolver resolver = new DefaultResolver(this.xsl, this.getPrincipal(), this.uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				document = trans.transform(document, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
@@ -160,8 +155,8 @@ public class WebProduct extends WebInterface {
 				// Marshal out to a document.
 				doc = marshaller.marshalToDom(product);
 				// Transform our xsl
-				if(!xsl.equals(MyResolver.NO_TRANSFORM)) {
-					MyResolver resolver = new MyResolver(xsl, this.getPrincipal(), this.uriInfo);
+				if(!xsl.equals(DefaultResolver.NO_TRANSFORM)) {
+					XSLTResolver resolver = new DefaultResolver(xsl, this.getPrincipal(), this.uriInfo, this);
 					XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 					doc = trans.transform(doc, resolver.getParams());
 					type = MediaType.TEXT_HTML_TYPE;

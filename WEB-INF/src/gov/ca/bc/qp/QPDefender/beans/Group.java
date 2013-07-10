@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
 
 /**

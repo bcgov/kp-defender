@@ -10,7 +10,7 @@
 	<xsl:import href="useraccess.xsl"/>
 
 	<xsl:param name="roles" select="''"/>
-	<xsl:param name="msg" select="''"/>
+	<xsl:param name="msg"/>
 	    
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
 	            
@@ -42,9 +42,9 @@
 							</xsl:otherwise>
 						</xsl:choose>
 						<div class="form_container">
-							<xsl:if test="not($msg = '')">
-								<h3><font color="red"><xsl:value-of select="fun:decodeUrL($msg)"/></font></h3>
-							</xsl:if>
+							<xsl:for-each select="$msg">
+								<h3><font color="red"><xsl:value-of select="fun:decodeUrL(.)"/></font></h3>
+							</xsl:for-each>
 							<xsl:apply-templates select="group"/>
 						</div>
 						<xsl:if test="group/id &gt; 0">
@@ -374,7 +374,7 @@
 			<div class="controlButtons">
 				<form action="/QPDefender/app/group/productAccess/delete/ID/{userProductsID}" method="post"><input type="submit" value="Delete Product"/></form>
 				<a href="/QPDefender/app/productaccess/userCredId={parent::useraccess/userCredentialId}/groupid={/group/id}/productid={product/id}/productAccess/ID/{userProductsID}" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/edit.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Edit Product</a>
-				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/roles/userrole/empty" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
+				<a href="/QPDefender/app/userroles/userid={userid}/productid={product/id}/groupid={/group/id}/roles/userrole/empty" class="lbOn"><img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle" /> Add Role</a>
 			</div>
 		</div>
 	</xsl:template>

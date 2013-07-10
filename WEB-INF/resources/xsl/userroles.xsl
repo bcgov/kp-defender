@@ -15,6 +15,8 @@
 	<xsl:param name="userid" select="-1"/>
 	<!-- Unique identifer for the product the user has access to. -->
 	<xsl:param name="productid" select="-1"/>
+	<!-- The group that we're updating -->
+	<xsl:param name="groupid" select="-1"/>
 	    
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
 	            
@@ -32,6 +34,7 @@
 						<input type="hidden" name="productid" value="{$productid}"/>
 						<xsl:sequence select="fun:getProductRoleCombo()"/>
 						<div class="actions">
+							<input type="hidden" name="return_URI" value="/QPDefender/app/group/groups/ID/{$groupid}"/>
 							<input type="submit" value="Submit"/>
 							<a href="#" class="lbAction" rel="deactivate"><button>Cancel</button></a>
 						</div>

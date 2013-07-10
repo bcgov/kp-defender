@@ -21,7 +21,7 @@ import java.util.List;
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;

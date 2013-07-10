@@ -10,10 +10,6 @@
 package gov.ca.bc.qp.QPDefender.web;
 
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,8 +18,7 @@ import java.util.Date;
 import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
@@ -31,13 +26,7 @@ import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
-
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -45,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -52,12 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
 
 
 
@@ -67,9 +52,9 @@ import org.w3c.dom.Document;
  *
  */
 @Path("{xsl:.+}/groups")
-public class WebGroup {
+public class WebGroup extends WebInterface {
 
-	Logger log = Logger.getLogger(getClass());
+	final static Logger log = Logger.getLogger(WebGroup.class);
 	
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;
@@ -77,7 +62,7 @@ public class WebGroup {
 	@Context private UriInfo uriInfo;
 	
 	// Get our xslt path for transformations.
-	@PathParam("xsl") public String xsl_global;
+	//@PathParam("xsl") public String xsl_global;
 	
 	// Used for testing
 	protected QPPrincipal principal = null;
@@ -102,8 +87,16 @@ public class WebGroup {
 	@Path("empty")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
-	public Response getEmptyGroup() {
-		Response response = null;
+	public Response getEmptyGroup(@QueryParam("xsl") String optional_xsl, @QueryParam("return_URI") String optional_Return_URI) {
+		
+		// Kill null pointers for our optional paramaters.
+		if(optional_xsl == null) 
+			optional_xsl = "";
+		if(optional_Return_URI == null)
+			optional_Return_URI = "";
+		
+		Response response = this.getResponse(new Group(), optional_xsl, optional_Return_URI, null);
+		/*
 		Group group = new Group();
 		QPMarshaller marshaller = new QPMarshaller();
 		try {
@@ -126,7 +119,7 @@ public class WebGroup {
 			log.error("Error while marshalling empty group", e);
 			response = Response.serverError().build();
 		} finally {}
-		
+		*/
 		return response;
 	}
 	
@@ -166,7 +159,9 @@ public class WebGroup {
 			@FormParam("organisation_type") String organisation_type,
 			@FormParam("contact_fax") String contact_fax,
 			@FormParam("sap_order") String sap_order,
-			@FormParam("sap_customer") String sap_customer) {
+			@FormParam("sap_customer") String sap_customer,
+			@FormParam("xsl") String optional_xsl,
+			@FormParam("return_URI") String optional_Return_URI) {
 		Response response = null;
 		DAOUser daoUser = new DAOUser();
 		User user = null;
@@ -177,7 +172,11 @@ public class WebGroup {
 		int iID = -1;
 		boolean active = false;
 		
-		this.log.error("Group being added");
+		log.error("Group being added");
+		
+		// Kill our optional null pointer exceptions
+		if(optional_Return_URI == null)
+			optional_Return_URI = "";
 		
 		// If the id is not an integer send server error, this should never happen.
 		try {
@@ -229,6 +228,30 @@ public class WebGroup {
 					new ArrayList<GroupProduct>());
 			DAOGroup dao = new DAOGroup();
 			
+			String[] messages;
+			if(iID == -1) {
+				messages = new String[]{"Group Added"};
+				iID = dao.addGroup(group);
+			} else { 
+				messages = new String[]{"Group Updated"};
+				dao.updateGroup(group);
+			}
+			// This is a unique situation, because there is no id until the group is created have
+			//	the default behaviour loop back to itself. If there is an optional_Return_URI then
+			//	proceed to that one instead.
+			if(optional_Return_URI.equals("")) {
+				optional_Return_URI = "/QPDefender/app/" + this.xsl + "/groups";
+				if(this.getPrincipal().getGroupId() == iID) {
+					// They are editing their own, redirect them to me
+					optional_Return_URI = optional_Return_URI + "/me";
+				} else {
+					// There are editing a seperate group, redirect them back to it.
+					optional_Return_URI = optional_Return_URI + "/ID/" + Integer.toString(iID);
+				}
+			}
+			
+			response = this.getResponse(optional_Return_URI, messages);
+			/*
 			// We'll add a update parameter to our xsl.
 			String xsl= this.xsl_global;
 			// If the id of this group is -1 it means we're adding a new group. If not we're updating.
@@ -248,6 +271,7 @@ public class WebGroup {
 			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
 			response = Response.seeOther(redirectURI).build();
 			//response = Response.ok().entity("Success").build();
+			 */
 		} catch (ObjectNotFoundException e) {
 			log.warn("Error when adding a group, user not found", e);
 			response = Response.status(Status.NOT_FOUND).build();
@@ -257,10 +281,12 @@ public class WebGroup {
 		} catch (ParseException e) {
 			log.warn("Invalid date format", e);
 			response = Response.status(Status.BAD_REQUEST).build();
-		} catch (UnsupportedEncodingException e) {
+		} 
+		/*catch (UnsupportedEncodingException e) {
 			log.error("URI format is incorrect", e);
 			response = Response.status(Status.BAD_REQUEST).build();
 		}
+		*/
 		
 		return response;
 	}
@@ -273,20 +299,28 @@ public class WebGroup {
 	@Path("me")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
 	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
-	public Response getMyGroup() {
+	public Response getMyGroup(@QueryParam("xsl") String optional_xsl, @QueryParam("return_URI") String optional_Return_URI) {
 		Response response = null;
-		DAOUser dao = new DAOUser();
-		User user = null;
-		try {
-			user = dao.lookupUserById(this.getPrincipal().getUserId());
-			response = this.getGroup(Integer.toString(user.getGroupId()));
-		} catch (ObjectNotFoundException e) {
+		//DAOUser dao = new DAOUser();
+		// Kill null pointers for our optional paramaters.
+		if(optional_xsl == null) 
+			optional_xsl = "";
+		if(optional_Return_URI == null)
+			optional_Return_URI = "";
+		//User user = null;
+		//try {
+			//response = this.getResponse(dao.lookupUserById(this.getPrincipal().getUserId()));
+			//user = dao.lookupUserById(this.getPrincipal().getUserId());
+		response = this.getGroup(Integer.toString(this.getPrincipal().getGroupId()), optional_xsl, optional_Return_URI);
+	/*	
+	} catch (ObjectNotFoundException e) {
 			log.warn("User not found while looking up My Group for " + Integer.toString(this.getPrincipal().getUserId()), e);
 			response = Response.status(Status.NOT_FOUND).build();
 		} catch (DAOException e) {
 			log.error("Data Access exception when accessing my group", e);
 			response = Response.serverError().build();
 		}
+		*/
 		
 		return response;
 	}
@@ -300,13 +334,26 @@ public class WebGroup {
 	@Path("ID/{ID}")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
 	@RolesAllowed({MyRoles.QP_ADMIN})
-	public Response getGroup(@PathParam("ID") String id) {
+	public Response getGroup(@PathParam("ID") String id, 
+			@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
 		Response response = null;
 		DAOGroup dao = new DAOGroup();
 		Group group = new Group();
-		QPMarshaller marshaller = new QPMarshaller();
+		//QPMarshaller marshaller = new QPMarshaller();
+		
+		// Kill null pointers for our optional paramaters.
+		if(optional_xsl == null) 
+			optional_xsl = "";
+		if(optional_Return_URI == null)
+			optional_Return_URI = "";
+		
 		try {
 			group = dao.lookupGroup(Integer.parseInt(id));
+			
+			response = this.getResponse(group, optional_xsl, optional_Return_URI, null);
+			/*
+			
 			Document doc = marshaller.marshalToDom(group);
 			MediaType type = MediaType.TEXT_XML_TYPE;
 			// If we have a transformer set, resolve to HTML.
@@ -320,6 +367,7 @@ public class WebGroup {
 			} else {	
 				response = Response.ok().entity(doc).type(type).build();
 			}
+			*/
 		} catch (NumberFormatException e) {
 			log.warn("Group id is not a integer", e);
 			response = Response.status(Status.BAD_REQUEST).build();
@@ -329,6 +377,7 @@ public class WebGroup {
 		} catch (DAOException e) {
 			log.error("Error when access our data source for group.", e);
 			response = Response.serverError().build();
+		/*
 		} catch (JAXBException e) {
 			log.error("Error when marshalling our group object.", e);
 			response = Response.serverError().build();
@@ -338,10 +387,16 @@ public class WebGroup {
 		} catch (TransformerException e) {
 			log.error("Error while transforming group with stylesheet: " + this.xsl_global, e);
 			response = Response.serverError().build();
+		*/
 		}
 		
-		
 		return response;
+	}
+
+	@Override
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		return log;
 	}
 	
 	

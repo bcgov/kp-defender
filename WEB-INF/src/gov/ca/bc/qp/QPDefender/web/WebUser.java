@@ -12,8 +12,7 @@ import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
 import gov.ca.bc.qp.QPDefender.beans.CredentialType;
 import gov.ca.bc.qp.QPDefender.beans.Group;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
-import gov.ca.bc.qp.QPDefender.config.MyResolver;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
@@ -21,6 +20,8 @@ import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
 import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
@@ -33,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -52,11 +54,12 @@ import org.w3c.dom.Document;
  * @author spencer.tickner
  */
 @Path("{xsl:.+}/user")
-public class WebUser {
+public class WebUser extends WebInterface {
 
 	Logger log = Logger.getLogger(getClass());
 
 	// Grab our context to get our principal.
+	/*
 	@Context private SecurityContext securityContext;
 	@Context private HttpHeaders header;
 	@Context private UriInfo uriInfo;
@@ -68,48 +71,75 @@ public class WebUser {
 	 * 	security context.
 	 * @return	A object representing the user accessing this interface.
 	 */
+	/*
 	public QPPrincipal getPrincipal() {
 		if(securityContext != null)
 			principal = (QPPrincipal)securityContext.getUserPrincipal();
 		return principal;
 	}
-	
+	*/
 	/**
 	 * This is for testing. Usually the container's securityContext takes care of setting the principal.
 	 * @param principal Information on the user that's logged in and accessing the service.
 	 */
+	/*
 	protected void setPrincipal(QPPrincipal principal) {
 		this.principal = principal;
 	}
+	*/
 	
 	// Get our xslt path for transformations.
-	@PathParam("xsl") public String xsl_global;
+	//@PathParam("xsl") public String xsl_global;
 	
-	
+	/**
+	 * Deletes a user and all their access.
+	 * @param userid		Unique identifier for the user we wish to delete.
+	 * @param optional_xsl	Optional xsl to render the content.
+	 * @param optional_Return_URI Optional place to redirect the response after completed.
+	 * @return
+	 */
 	@POST
 	@Path("/delete")
-	@RolesAllowed(MyRoles.QP_ADMIN)
-	public Response deleteUserAndAccess(@FormParam("userid") String userid) {
+	@RolesAllowed({MyRoles.QP_ADMIN, MyRoles.QP_SECURITY_GROUP_ADMIN})
+	public Response deleteUserAndAccess(@FormParam("userid") String userid,
+			@FormParam("xsl") String optional_xsl, 
+			@FormParam("return_URI") String optional_Return_URI) {
 		Response response = null;
 		DAOAccess dao = new DAOAccess();
+		DAOUser daoUser = new DAOUser();
 		String url = "";
+
 		try {
 			int i_userid = Integer.parseInt(userid);
-			dao.DeleteUserAndAccessById(i_userid);
-			String redirect = this.xsl_global;
-			// Construct our redirection string.
-			redirect = this.xsl_global + "/msg=" + URLEncoder.encode("User Deleted", "UTF-8");
+			User user = daoUser.lookupUserById(i_userid);
+			// Security Group Admins can only delete users from their group.
+			if(this.securityContext.isUserInRole(MyRoles.QP_SECURITY_GROUP_ADMIN) &&
+					(this.getPrincipal().getGroupId() != user.getGroupId())) {
+				response = Response.status(Status.FORBIDDEN).build();
+			} else {
+				dao.DeleteUserAndAccessById(i_userid);
+				//String redirect = this.xsl_global;
+				// Construct our redirection string.
+				String[] messages = new String[]{"User Deleted"};
+				// Default to this requested uri if an optional_return_uri is not specified.
+				if(optional_Return_URI == null || optional_Return_URI.equals(""))
+					optional_Return_URI = this.uriInfo.getPath();
+				
+				response = this.getResponse(optional_Return_URI, messages);
+			}
+			
+			//redirect = this.xsl_global + "/msg=" + URLEncoder.encode("User Deleted", "UTF-8");
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
-			url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
-			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
-			response = Response.seeOther(redirectURI).build();
+			//url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(this.getPrincipal().getGroupId());
+			//URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
+			//response = Response.seeOther(redirectURI).build();
 		} catch (DAOException e) {
 			this.log.error("Error accesing data source while deleting user", e);
 			response = Response.serverError().build();
-		} catch (UnsupportedEncodingException e) {
-			this.log.warn("URI exception while redirecting from deleting user. URI: " + url, e);
-			response = Response.status(Status.BAD_REQUEST).build();
-		} finally {}
+		} catch (ObjectNotFoundException e) {
+			this.log.warn("Trying to delete a user that doesn't exist. ID " + userid, e);
+			response = Response.status(Status.NOT_FOUND).entity("User not found").build();
+		}
 		return response;
 	}
 	
@@ -123,32 +153,36 @@ public class WebUser {
 	@Path("/me")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
 	@PermitAll
-	public Response getMyInformation() {
-		MediaType type = MediaType.APPLICATION_XML_TYPE;
+	public Response getMyInformation(@QueryParam("xsl") String optional_xsl, 
+			@QueryParam("return_URI") String optional_Return_URI) {
+		//MediaType type = MediaType.APPLICATION_XML_TYPE;
 		Response response = null;
 		int userId = this.getPrincipal().getUserId();
 		DAOUser dao = new DAOUser();
 		UserCredentials creds = null;
 		try {
 			creds = dao.LookupUserCredentialsByUserId(userId);
+			response = this.getResponse(creds, optional_xsl, optional_Return_URI, null);
+			/*
 			creds.makeSecure();
 			QPMarshaller marshaller = new QPMarshaller();
 			Document doc = marshaller.marshalToDom(creds);
 			// Transform our xsl
-			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
+			if(!xsl_global.equals(DefaultResolver.NO_TRANSFORM)) {
+				XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), this.uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
 			}
 			response = Response.ok().entity(doc).build();
+			*/
 		} catch (ObjectNotFoundException e) {
 			log.warn("User Credentials where not found", e);
 			response = Response.status(Status.NOT_FOUND).build();
 		} catch (DAOException e) {
 			log.error("Error occurred while accessing our Data source for User Credentials", e);
 			response = Response.serverError().build();
-		} catch (JAXBException e) {
+		} /*catch (JAXBException e) {
 			log.error("Error occurred while rendering User Credentials", e);
 			response = Response.serverError().build();
 		} catch (ParserConfigurationException e) {
@@ -157,7 +191,7 @@ public class WebUser {
 		} catch (TransformerException e) {
 			log.error("Error occurred while transforming User Credentials", e);
 			response = Response.serverError().build();
-		}
+		}*/
 		
 		return response;
 	}
@@ -174,33 +208,36 @@ public class WebUser {
 	 * @return
 	 */
 	@POST
+	@Path("/credentials/update")
 	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
 	@PermitAll
 	public Response updateCredentials(
 			@FormParam("newCredential1") String newCredential,
-			@FormParam("repeatCredential1") String repeatCredential,
 			@FormParam("newCredential2") String newCredential2,
-			@FormParam("repeatCredential2") String repeatCredential2) {
-		MediaType type = MediaType.APPLICATION_XML_TYPE;
+			@FormParam("xsl") String optional_xsl, 
+			@FormParam("return_URI") String optional_Return_URI) {
+		
+		//MediaType type = MediaType.APPLICATION_XML_TYPE;
 		Response response = null;
-		Document doc = null;
+		//Document doc = null;
 		UserCredentials creds = null;
+		
+		String[] messages = null;
 		
 		// remove null pointers
 		if(newCredential == null)
 			newCredential = "";
-		if(repeatCredential == null)
-			repeatCredential = "";
 		if(newCredential2 == null)
 			newCredential2 = "";
-		if(repeatCredential2 == null)
-			repeatCredential2 = "";
+		
+		// redirect them back to themselves if there is not redirecting url
+		if(optional_Return_URI == null || optional_Return_URI.equals(""))
+			optional_Return_URI = uriInfo.getPath();
 		
 		try {
-			if(!newCredential.equals(repeatCredential) || newCredential2.equals(repeatCredential2)) {
-				doc = Message.UNMATCHED_CREDENTIALS.getMessage();
-			} else if(newCredential.length() < minCredLength) {
-				doc = Message.CREDENTIALS_TO_SHORT.getMessage();
+			if(newCredential.length() < minCredLength) {
+				messages = new String[]{"Credentials too short, minimum 4 characters in length"};
+				response = this.getResponse(optional_Return_URI, messages);
 			} else {
 				DAOUser dao = new DAOUser();
 				
@@ -208,32 +245,37 @@ public class WebUser {
 					creds = dao.LookupUserCredentialsByUserId(this.getPrincipal().getUserId());
 					creds.updateCredentials(newCredential, newCredential2);
 					dao.updateUserCredentials(creds);
-					doc = Message.SUCCESS.getMessage();
+					messages = new String[]{"Credentials Updated"};
+					response = this.getResponse(optional_Return_URI, messages);
 				} catch (ObjectNotFoundException e) {
 					// Usually we would return a 404, but we want the user to know that there credentials may not have been changed.
-					doc = Message.USER_NOT_FOUND.getMessage();
+					log.error("Credentials where not found for user " + this.getPrincipal().getUserId(), e);
+					response = Response.status(Status.PRECONDITION_FAILED).build();
 				}
 
 			}
 			
 			// Now resolve the document based on passed in stylesheet.
-			if(!xsl_global.equals(MyResolver.NO_TRANSFORM)) {
-				MyResolver resolver = new MyResolver(this.xsl_global, this.getPrincipal(), this.uriInfo);
+			/*
+			if(!xsl_global.equals(DefaultResolver.NO_TRANSFORM)) {
+				XSLTResolver resolver = new DefaultResolver(this.xsl_global, this.getPrincipal(), this.uriInfo, this);
 				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
 				doc = trans.transform(doc, resolver.getParams());
 				type = MediaType.TEXT_HTML_TYPE;
 			}
 			response = Response.ok().entity(doc).type(type).build();
+			*/
 		} catch (DAOException e) {
 			log.error("DAO Exception occurred when updating user credentials", e);
 			response = Response.serverError().build();
-		} catch (TransformerException e) {
+		} 
+		/*catch (TransformerException e) {
 			log.error("Transformer Exception occurred when updating user credentials", e);
 			response = Response.serverError().build();
 		} catch (ParserConfigurationException e) {
 			log.error("ParserConfigurationException Exception occurred when updating user credentials", e);
 			response = Response.serverError().build();
-		} finally {}
+		} finally {} */
 		
 		return response;
 			
@@ -262,7 +304,9 @@ public class WebUser {
 			@FormParam("credential2") String credential2,
 			@FormParam("userid") String userid,
 			@FormParam("groupid") String groupid,
-			@FormParam("meta") String meta) {
+			@FormParam("meta") String meta,
+			@FormParam("xsl") String optional_xsl, 
+			@FormParam("return_URI") String optional_Return_URI) {
 		
 		Response response = null;
 		int i_userid = -1;
@@ -275,6 +319,10 @@ public class WebUser {
 		i_groupid = Integer.parseInt(groupid);
 		i_credTypeId = Integer.parseInt(credTypeId);
 
+		// redirect them back to themselves if there is not redirecting url
+		if(optional_Return_URI == null || optional_Return_URI.equals(""))
+			optional_Return_URI = uriInfo.getPath();
+		
 		User user = new User(i_userid, i_groupid, username, email, meta);
 		
 		DAOAccess dao = new DAOAccess();
@@ -290,14 +338,18 @@ public class WebUser {
 			// Create our user access bean to be added/updated.
 			UserAccess ua = new UserAccess(user, null, i_credid, credType, credential, credential2);
 			dao.AddUpdateUserAccess(ua);
+			String[] messages = new String[]{"User Access Updated"};
+			response = this.getResponse(optional_Return_URI, messages);
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
 			// 	but ensure that if the principal's group id is the same as the one being updated we return to me.
+			/*
 			DAOGroup daoGroup = new DAOGroup();
 			Group group = daoGroup.lookupGroupByUserId(this.getPrincipal().getUserId());
-			String url = "/QPDefender/app/" + this.xsl_global + "/groups/";
+			String url = "/QPDefender/app/" + this.xsl_global + "/groups/";*/
 			// If the principal owns this group we will redirect them to "me", this is for roles where a group owner
 			//		may be able to add users to themselves, but not others. If it's a qpadmin they can add users to
 			//		everyone so we redirect to the id.
+			/*
 			if(group.getId() == i_groupid) {
 				url = url + "me";
 			} else {
@@ -305,6 +357,7 @@ public class WebUser {
 			}
 			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
 			response = Response.seeOther(redirectURI).build();
+			*/
 			
 		} catch (DAOException e) {
 			log.error("Error accessing the database when adding/updating credentials", e);
@@ -312,11 +365,11 @@ public class WebUser {
 		} catch (InvalidCharacterException e) {
 			log.error("Invalid character exception when adding/updating credentials", e);
 			response = Response.serverError().build();
-		} catch (ObjectNotFoundException e) {
+		}/* catch (ObjectNotFoundException e) {
 			log.error("No group found for user " + Integer.toString(this.getPrincipal().getUserId()), e);
 			response = Response.serverError().build();
 			
-		}
+		}*/
 		
 		return response;
 		
@@ -337,6 +390,12 @@ public class WebUser {
 		        null);
 		String request = uri2.toASCIIString();
 		System.out.println(request);
+	}
+
+	@Override
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		return log;
 	}
 	
 	

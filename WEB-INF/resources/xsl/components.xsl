@@ -63,7 +63,7 @@
 		<xsl:param name="value"/>
 		<select name="custtype" required="required">
 			<option value="">Please Select</option>
-			<xsl:for-each select="$custTypeDoc/types/CustType">
+			<xsl:for-each select="$custTypeDoc/CustTypes/CustType">
 				<option value="{id}">
 					<xsl:if test="id = $value">
 						<xsl:attribute name="selected">selected</xsl:attribute>

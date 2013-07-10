@@ -9,10 +9,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import gov.ca.bc.qp.QPDefender.beans.ProductAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
-import gov.ca.bc.qp.QPDefender.beans.UserAccess;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOProducts;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
