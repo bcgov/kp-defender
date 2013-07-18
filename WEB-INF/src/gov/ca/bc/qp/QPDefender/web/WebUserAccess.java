@@ -60,7 +60,7 @@ public class WebUserAccess extends WebInterface {
 				response = Response.status(Status.NOT_ACCEPTABLE).entity("Username exists").build();
 			}
 			// If everything is ok, add the user access.
-			if(response != null) {
+			if(response == null) {
 				daoAccess.AddUpdateUserAccess(ua);
 				response = Response.ok().build();
 			}
