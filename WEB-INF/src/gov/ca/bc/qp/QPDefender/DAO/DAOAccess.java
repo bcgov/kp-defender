@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,22 +60,27 @@ public class DAOAccess extends DAOSecurity {
 		CallableStatement stmt = null;
 		try {
 			con = this.getConnectionPool().getConnection();
+			// Don't auto commmit in case something goes wrong while ading Product Access.
 			con.setAutoCommit(false);
-			stmt = con.prepareCall("{call UpdateAddUserAccess(?,?,?,?,?,?,?,?,?)}");
-			stmt.setInt(1, access.getUser().getId());
-			stmt.setInt(2, access.getUser().getGroupId());
-			stmt.setString(3, access.getUser().getUsername());
-			stmt.setString(4, access.getUser().getEmail());
-			stmt.setInt(5, access.getUserCredentialId());
-			stmt.setString(6, access.getCredentialType());
-			stmt.setString(7, access.getCredential());
-			stmt.setString(8, access.getCredential2());
-			stmt.setString(9, access.getUser().getMeta());
+			stmt = con.prepareCall("{? = call UpdateAddUserAccess(?,?,?,?,?,?,?,?,?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
+			stmt.setInt(2, access.getUser().getId());
+			stmt.setInt(3, access.getUser().getGroupId());
+			stmt.setString(4, access.getUser().getUsername());
+			stmt.setString(5, access.getUser().getEmail());
+			stmt.setInt(6, access.getUserCredentialId());
+			stmt.setString(7, access.getCredentialType());
+			stmt.setString(8, access.getCredential());
+			stmt.setString(9, access.getCredential2());
+			stmt.setString(10, access.getUser().getMeta());
 			stmt.execute();
 			
+			// we will always get the userid out of our procedure in case this is a new user we'd be adding product
+			//		access information to userid -1. 
+			int userid = stmt.getInt(1);
 			if(access.getProductAccess() != null)
-				this.AddUpdateProductAccess(access);
-			
+				this.AddUpdateProductAccess(access.getUser().getGroupId(), userid, access);
+			// Everythings gone well, commit away.
 			con.commit();
 		} catch (SQLException e) {
 			try { 
@@ -97,18 +103,19 @@ public class DAOAccess extends DAOSecurity {
 	 * @throws DAOException	Error occurred while communicating with the database.
 	 * @throws InvalidCharacterException An invalid character was found in one of the components.
 	 */
-	public void AddUpdateProductAccess(int userid, ProductAccess pa) throws DAOException, InvalidCharacterException {
+	public void AddUpdateProductAccess(int groupid, int userid, ProductAccess pa) throws DAOException, InvalidCharacterException {
 		Connection con = null;
 		CallableStatement stmt = null;
 		try {
 			con = this.getConnectionPool().getConnection();
-			stmt = con.prepareCall("{call UpdateAddProductAccess(?,?,?,?,?,?)}");
-			stmt.setInt(1, pa.getUserProductsID());
-			stmt.setInt(2, userid);
-			stmt.setInt(3, pa.getProduct().getId());
-			stmt.setInt(4, pa.getTimeout());
-			stmt.setBoolean(5, pa.isActive());
-			stmt.setString(6, this.createRoleCSS(pa));
+			stmt = con.prepareCall("{call UpdateAddProductAccess(?,?,?,?,?,?,?)}");
+			stmt.setInt(1, groupid);
+			stmt.setInt(2, pa.getUserProductsID());
+			stmt.setInt(3, userid);
+			stmt.setInt(4, pa.getProduct().getId());
+			stmt.setInt(5, pa.getTimeout());
+			stmt.setBoolean(6, pa.isActive());
+			stmt.setString(7, this.createRoleCSS(pa));
 			stmt.execute();
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -153,6 +160,7 @@ public class DAOAccess extends DAOSecurity {
 		}
 		return id;
 	}
+
 	
 	/**
 	 * Looks up the access to a product by that accesses unique identifier.
@@ -191,7 +199,7 @@ public class DAOAccess extends DAOSecurity {
 	 * @throws DAOException	Error occurred when accessing our data source.
 	 * @throws InvalidCharacterException	An invalid character was found in one of the components.
 	 */
-	public void AddUpdateProductAccess(UserAccess access) throws DAOException, InvalidCharacterException {
+	public void AddUpdateProductAccess(int groupid, int userid, UserAccess access) throws DAOException, InvalidCharacterException {
 		Connection con = null;
 		CallableStatement stmt = null;
 		boolean complete = true; // To manage roll backs and commits.
@@ -207,16 +215,17 @@ public class DAOAccess extends DAOSecurity {
 			//stmt.execute();
 			
 			// Add all the new information, essentially completing an update.
-			stmt = con.prepareCall("{call UpdateAddProductAccess(?,?,?,?,?,?)}");
+			stmt = con.prepareCall("{call UpdateAddProductAccess(?,?,?,?,?,?,?)}");
 			for(int i = 0; i < access.getProductAccess().size(); i++) {
 				ProductAccess pa = access.getProductAccess().get(i);
 				
-				stmt.setInt(1, pa.getUserProductsID());
-				stmt.setInt(2, access.getUser().getId());
-				stmt.setInt(3, pa.getProduct().getId());
-				stmt.setInt(4, pa.getTimeout());
-				stmt.setBoolean(5, pa.isActive());
-				stmt.setString(6, this.createRoleCSS(pa));
+				stmt.setInt(1, groupid);
+				stmt.setInt(2, pa.getUserProductsID());
+				stmt.setInt(3, userid); // Always used passed in value in case the UserAccess Bean is new and everything has userid of -1.
+				stmt.setInt(4, pa.getProduct().getId());
+				stmt.setInt(5, pa.getTimeout());
+				stmt.setBoolean(6, pa.isActive());
+				stmt.setString(7, this.createRoleCSS(pa));
 				stmt.execute();
 			} 
 

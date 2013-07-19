@@ -14,6 +14,7 @@ public class DAOAccessTest extends DataSourceTestUtil {
 	// static testing userid
 	private static final int userid1 = 1;
 	private static final int userid2 = 2;
+	private static final int groupid = 1;
 	
 	@Test
 	public void testDAOAccess_User() {
@@ -53,7 +54,7 @@ public class DAOAccessTest extends DataSourceTestUtil {
 			int dummyTimeout = 1009;
 			// we'll change a product access timeout.
 			ua1.getProductAccess().get(0).setTimeout(dummyTimeout);
-			dao.AddUpdateProductAccess(ua1);
+			dao.AddUpdateProductAccess(groupid, userid1, ua1);
 			
 			// Now we'll re-look it up to ensure it's changed.
 			ua1 = dao.lookupUserAccess(userid1);
@@ -82,7 +83,7 @@ public class DAOAccessTest extends DataSourceTestUtil {
 			// Ok we change a product Access and a User Access all for now, revert it back to the copy.
 			try {
 				dao.AddUpdateUserAccess(copy);
-				dao.AddUpdateProductAccess(copy);
+				dao.AddUpdateProductAccess(groupid, userid1, copy);
 			} catch(Exception e) {
 				System.out.println("Warning Database may be out of sync. Clean up failed.");
 				e.printStackTrace();
