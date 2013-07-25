@@ -1,5 +1,7 @@
 package gov.ca.bc.qp.QPDefender.DAO;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,12 +14,14 @@ import org.apache.log4j.Logger;
 
 import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
+import gov.ca.bc.qp.qpcommon.authenticate.PasswordHash;
 import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.authenticate.Role;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
@@ -70,7 +74,16 @@ public class DAOAccess extends DAOSecurity {
 			stmt.setString(5, access.getUser().getEmail());
 			stmt.setInt(6, access.getUserCredentialId());
 			stmt.setString(7, access.getCredentialType());
-			stmt.setString(8, access.getCredential());
+			
+			// Because we hash our credentials in the database we must determine if this is a password credential
+			//	and if so whether or not it's hashed.. If it isn't hash it before writing it to disk.
+			String hashedCred = "";
+			if(access.getCredentialType().equals(UserCredentials.CredType.STANDARD.toString())) {
+				if(!PasswordHash.isHashed(access.getCredential()))
+					hashedCred = PasswordHash.createHash(access.getCredential());
+			}
+			
+			stmt.setString(8, hashedCred);
 			stmt.setString(9, access.getCredential2());
 			stmt.setString(10, access.getUser().getMeta());
 			stmt.execute();
@@ -89,6 +102,12 @@ public class DAOAccess extends DAOSecurity {
 				log.error("Could not rollback AddUpdateUserAccess. " + access.getUserCredentialId(), ex);
 			}
 			throw new DAOException(e);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
 			try { stmt.close(); } catch(Exception ignore) {}

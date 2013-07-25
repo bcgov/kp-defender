@@ -45,6 +45,15 @@ public class WebUserAccess extends WebInterface {
 		
 	}
 	
+	/**
+	 * Adds a user and all their associated credentials and product access to our data source.
+	 * @param ua	Object representing a user and the products and roles they have access to.
+	 * @return	<p>Status 200:	The user access was successfully added.</p>
+	 * 			<p>Status 406: 	Credentials are invalid in length</p>
+	 * 			<p>				Username already exists within the database</p>
+	 * 			<p>				Invalid characters within the User Access Object</p>
+	 * 			<p>Status 500:	An error occurred accessing our data source</p>
+	 */
 	@POST
 	@Path("/add")
 	@RolesAllowed({MyRoles.QP_SECURITY_GROUP_ADMIN, MyRoles.QP_ADMIN})
@@ -54,7 +63,10 @@ public class WebUserAccess extends WebInterface {
 		try {
 			// Check to ensure the credentials meet our requirement.
 			if(ua.getCredential() == null || ua.getCredential().length() < 4) {
-				response = Response.status(Status.NOT_ACCEPTABLE).entity("Invalid credential").build();
+				response = Response.status(Status.NOT_ACCEPTABLE).entity("Invalid credential - To Short").build();
+			// Check to ensure this username is not too long
+			} else if(ua.getCredential().length() > 300) {
+				response = Response.status(Status.NOT_ACCEPTABLE).entity("Invalid credential - To Long").build();				
 			// Check to ensure this username does not exist
 			} else if(this.usernameExists(ua.getUser().getUsername(), ua.getUser().getId())) {
 				response = Response.status(Status.NOT_ACCEPTABLE).entity("Username exists").build();
