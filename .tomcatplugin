@@ -5,7 +5,7 @@
     <reloadable>true</reloadable>
     <redirectLogger>false</redirectLogger>
     <updateXml>true</updateXml>
-    <warLocation>D:\Servers\tomcat6\webapps\QPDefender.war</warLocation>
+    <warLocation>\\serv-dev-app\Tomcat 6.0\webapps\QPDefender.war</warLocation>
     <extraInfo></extraInfo>
     <webPath>/QPDefender</webPath>
 </tomcatProjectProperties>
