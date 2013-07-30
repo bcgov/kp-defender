@@ -75,7 +75,10 @@ public class WebUserAccess extends WebInterface {
 			if(response == null) {
 				daoAccess.AddUpdateUserAccess(ua);
 				response = Response.ok().build();
+				// Update that fact that our group has been modified.
+				this.updateGroupUserModified(this.getPrincipal().getUserId(), ua.getUser().getGroupId());
 			}
+
 		} catch (DAOException e) {
 			response = Response.serverError().build();
 		} catch (InvalidCharacterException e) {

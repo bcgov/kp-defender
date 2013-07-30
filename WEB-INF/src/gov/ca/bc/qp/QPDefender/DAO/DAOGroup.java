@@ -11,12 +11,15 @@ package gov.ca.bc.qp.QPDefender.DAO;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import qp.sentry.QPPrincipal;
 
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
@@ -249,6 +252,28 @@ public class DAOGroup extends DAOSecurity {
 			try { rs.close(); } catch(Exception ignore) {}
 		}
 		return group;
+	}
+	
+	/**
+	 * Updates the last user to modify this group.
+	 * @param userid	The unique identifier for the user updating this group.
+	 * @param groupid	The unique identifier for the group that has been updated.
+	 * @throws DAOException An exception occurred when updating out Data Source.
+	 */
+	public void updateUserModified(int userid, int groupid) throws DAOException {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = this.getConnectionPool().getConnection();
+			stmt = con.prepareStatement("UPDATE Group SET MODIFY_ID = " + Integer.toString(userid) + 
+					" WHERE ID = " + Integer.toString(groupid));
+			stmt.execute();
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}				
+		}
 	}
 	
 	/**

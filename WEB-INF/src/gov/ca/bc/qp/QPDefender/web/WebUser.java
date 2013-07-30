@@ -126,6 +126,8 @@ public class WebUser extends WebInterface {
 					optional_Return_URI = this.uriInfo.getPath();
 				
 				response = this.getResponse(optional_Return_URI, messages);
+				// Update the fact that someone has modified the group.
+				this.updateGroupUserModified(this.getPrincipal().getUserId(), user.getGroupId());
 			}
 			
 			//redirect = this.xsl_global + "/msg=" + URLEncoder.encode("User Deleted", "UTF-8");
@@ -340,6 +342,8 @@ public class WebUser extends WebInterface {
 			dao.AddUpdateUserAccess(ua);
 			String[] messages = new String[]{"User Access Updated"};
 			response = this.getResponse(optional_Return_URI, messages);
+			// Update the fact that the group has been modified.
+			this.updateGroupUserModified(this.getPrincipal().getUserId(), ua.getUser().getGroupId());
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
 			// 	but ensure that if the principal's group id is the same as the one being updated we return to me.
 			/*
@@ -374,7 +378,7 @@ public class WebUser extends WebInterface {
 		return response;
 		
 	}
-	
+	/*
 	public static void main(String[] args) throws UnsupportedEncodingException, URISyntaxException {
 		URI uri = new URI("http", null,
 				"localhost", 8080,
@@ -386,11 +390,12 @@ public class WebUser extends WebInterface {
 		        "http", 
 		        "www.google.com", 
 		        "/ig/api",
-		        "weather=São Paulo",
+		        "weather=Sao Paulo",
 		        null);
 		String request = uri2.toASCIIString();
 		System.out.println(request);
 	}
+	*/
 
 	@Override
 	public Logger getLogger() {

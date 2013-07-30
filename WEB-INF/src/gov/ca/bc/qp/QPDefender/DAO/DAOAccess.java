@@ -77,7 +77,7 @@ public class DAOAccess extends DAOSecurity {
 			
 			// Because we hash our credentials in the database we must determine if this is a password credential
 			//	and if so whether or not it's hashed.. If it isn't hash it before writing it to disk.
-			String hashedCred = "";
+			String hashedCred = access.getCredential();
 			if(access.getCredentialType().equals(UserCredentials.CredType.STANDARD.toString())) {
 				if(!PasswordHash.isHashed(access.getCredential()))
 					hashedCred = PasswordHash.createHash(access.getCredential());

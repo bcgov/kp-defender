@@ -10,6 +10,7 @@
 
 	<xsl:param name="roles" select="''"/>
 	<xsl:param name="msg" select="''"/>
+	<xsl:param name="uriPath" select="''"/>
 	<xsl:param name="groupid" select="'-1'"/>
 	    
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
@@ -79,7 +80,14 @@
 					  </td>
 				</tr>
 	          </table>
-	          <input type="hidden" name="return_URI" value="/QPDefender/app/group/groups/me"/>
+				<input type="hidden" name="return_URI">
+					<xsl:attribute name="value">
+						<xsl:choose>
+							<xsl:when test="ends-with($uriPath, '/me')">/QPDefender/app/group/groups/me</xsl:when>
+							<xsl:otherwise>/QPDefender/app/group/groups/ID/<xsl:value-of select="$groupid"/></xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+				</input>
 			  <input type="submit" value="Submit"/>
 	        </div>
 	   </form>		

@@ -5,7 +5,9 @@ import java.util.List;
 import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
 import gov.ca.bc.qp.qpcommon.authenticate.Role;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 import javax.annotation.security.RolesAllowed;
@@ -90,6 +92,16 @@ public class WebRoles extends WebInterface {
 				// Construct our redirection string.
 				//redirect = xsl + "/msg=" + URLEncoder.encode("Role Added", "UTF-8");
 				messages = new String[]{"Role Added"};
+				
+				// Update the fact that this group was modified.
+				try {
+					DAOUser daoUser = new DAOUser();
+					User user = daoUser.lookupUserById(i_userid);
+					this.updateGroupUserModified(this.getPrincipal().getUserId(), user.getGroupId());
+				} catch(Exception ignore) {
+					// Abstract the exception from the client.
+					this.getLogger().error("Exception occurred when updating modifiy user for group.");
+				}
 			}
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
 			/*

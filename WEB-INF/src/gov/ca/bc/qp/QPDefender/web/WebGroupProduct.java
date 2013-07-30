@@ -152,6 +152,8 @@ public class WebGroupProduct extends WebInterface {
 					// Add our update feedback.
 					messages = new String[]{"Product Updated"};
 				}
+				// Update the fact that the group has been modified.
+				this.updateGroupUserModified(this.getPrincipal().getUserId(), iGroupId);
 			}
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
 			/*
@@ -189,6 +191,13 @@ public class WebGroupProduct extends WebInterface {
 		Response response = null;
 		String[] messages;
 		try {
+			int groupid = -1;
+			try {
+				dao.lookupGroupProductById(Integer.parseInt(id)).getGroupid();
+			} catch(Exception e) {
+				// Abstract the exception as the only reason we're doing this is for updating the modified user
+				this.getLogger().error("Error looking up group by id for use in the modify user update.", e);
+			}
 			dao.deleteGroupProduct(Integer.parseInt(id));
 			messages = new String[]{"Product Access Deleted"};
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
@@ -196,6 +205,9 @@ public class WebGroupProduct extends WebInterface {
 			//URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
 			//response = Response.seeOther(redirectURI).build();
 			response = this.getResponse(optional_Return_URI, messages);
+			// Update the fact that this group has been modified.
+			if(groupid != -1)
+				this.updateGroupUserModified(this.getPrincipal().getUserId(), groupid);
 		/*
 		} catch (UnsupportedEncodingException e) {
 			log.warn("Encoding exception when deleting group " + id, e);

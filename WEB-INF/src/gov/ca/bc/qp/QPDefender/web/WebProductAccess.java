@@ -91,6 +91,10 @@ public class WebProductAccess extends WebInterface {
 			// Construct our redirection string.
 			//redirect = xsl + "/msg=" + URLEncoder.encode("Product Access Deleted", "UTF-8");
 			message = new String[]{"Product Access Deleted"};
+			
+			// Update the fact that this group has been modified.
+			this.updateGroupUserModified(this.getPrincipal().getUserId(), groupid);
+			
 			// We are going to redirect to the new group that was created using the same xsl to render the content.
 			/*
 			String url = "/QPDefender/app/" + redirect + "/groups/ID/" + Integer.toString(groupid);
@@ -148,6 +152,8 @@ public class WebProductAccess extends WebInterface {
 			URI redirectURI = this.uriInfo.getBaseUri().resolve(url);
 			response = Response.seeOther(redirectURI).build();
 			*/
+			// Update the fact that this group has been modified.
+			this.updateGroupUserModified(this.getPrincipal().getUserId(), uc.getUser().getGroupId());
 			return this.getResponse(optional_Return_URI, messages);
 		} catch (DAOException e) {
 			this.getLogger().error("Error accessing data source when adding user product", e);

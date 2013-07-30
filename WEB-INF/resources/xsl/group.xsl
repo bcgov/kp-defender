@@ -9,6 +9,7 @@
 	<xsl:import href="components.xsl"/>
 	<xsl:import href="useraccess.xsl"/>
 
+	<xsl:param name="uriPath" select="''"/>
 	<xsl:param name="roles" select="''"/>
 	<xsl:param name="msg"/>
 	    
@@ -322,6 +323,14 @@
 				<div class="deleteUser">
 					<form method="POST" action="/QPDefender/app/group/user/delete">
 						<input type="hidden" name="userid" value="{user/id}"/>
+						<input type="hidden" name="return_URI">
+							<xsl:attribute name="value">
+								<xsl:choose>
+									<xsl:when test="contains($uriPath, '/me')">/QPDefender/app/group/groups/me</xsl:when>
+									<xsl:otherwise>/QPDefender/app/group/groups/ID/<xsl:value-of select="/group/id"/></xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+						</input>
 						<input type="Submit" value="Delete User"/>
 					</form>
 				</div> 

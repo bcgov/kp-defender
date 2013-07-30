@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="QPDefender" default="dist" basedir="../">
+    <description>Build file for FOODSAFE Resistry Level 2</description>
+    
+    <!--**********************************************-->
+    <!-- PROPERTIES DECLARATIONS**********************-->
+    <!--**********************************************-->
+    
+    <!-- 4 possibilies for deploy_context: local, dev, test and prod -->
+    <!-- Hard coded to local for developer convenience. Ensure you have -->
+    <!-- TOMCAT_HOME system environment variable set and pointing to  -->
+    <!-- your local installation  -->
+    <property name="deploy_context">local</property>
+    <property name="isJunit">false</property>
+    <property name="isJavadoc">false</property>
+    <property environment="env"
+        description="this loads environment properties and can be referenced as such: ${env.USERNAME} for example."/>
+    <property name="antcontrib.classpath" location="${env.ANT_HOME}/lib/ant-contrib-1.0b3.jar"
+        description="antcontrib allows for greater Ant functionality and includes if/else etc."/>
+    <property name="tomcat.dev.lib.dir"
+        location="//serv-dev-app/Tomcat 6.0/lib"/>
+    <property name="javadoc.deploy.location" location="//comp_fs/User/Projects/FOODSAFE Registry 2 Project/javadocs" description="Deployment location for javadocs"/>
+    
+    <!--**********************************************-->
+    <!-- / PROPERTIES DECLARATIONS *******************-->
+    <!--**********************************************-->
+    
+    <!--**********************************************-->
+    <!-- PATH AND SUPPORT FILES **********************-->
+    <!--**********************************************-->
+    
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+        description="load antcontrib support.">
+        <classpath path="${antcontrib.classpath}"/>
+    </taskdef>
+    
+    <path id="FOODSAFE.classpath">
+        <pathelement location="WEB-INF/classes"/>
+        <fileset dir="WEB-INF/lib" includes="**/*.jar"/>
+        <fileset dir="${tomcat.dev.lib.dir}" includes="**/*.jar"/>
+    </path>
+    
+    <path id="TomcatTest.libs">
+        <pathelement location="${tomcat.test}/lib"/>
+        <pathelement location="${tomcat.test}/bin"/>
+    </path>
+    
+    <!--**********************************************-->
+    <!-- / PATH AND SUPPORT FILES ********************-->
+    <!--**********************************************-->
+    
+    <target name="dist" depends="load_deploy_props">
+        <description>compile, jar, distribute, etc.</description>
+        <!--<antcall target="tomcat-stop"/>-->
+        <if>
+            <contains string="${isJunit}" substring="true"/>
+            <then>
+                <echo>Junit testing in progress...</echo>
+                <antcall target="junit_test"/>
+            </then>
+        </if>
+        <if>
+            <contains string="${isJavadoc}" substring="true"/>
+            <then>
+                <echo>Javadocs requested.</echo>
+                <antcall target="deploy_javadoc"/>
+            </then>
+        </if>
+        
+        <!--<antcall target="prepare"/>-->
+        <antcall target="deploy"/>
+        <antcall target="cleanup"/>
+        <!--<antcall target="tomcat-start-debug"/>-->
+        <echo>Done.</echo>
+    </target>
+    
+    <target name="junit_test">
+        <description>Runs junit tests in the WEB-INF/test dir. This test ignores all classes in the
+            *.*.*.*.QPDefender.test package as these are support and exception classes.</description>
+        <!--<mkdir dir="${junit.output.dir}"/>-->
+        <junit fork="yes" printsummary="withOutAndErr" haltonerror="false">
+            <classpath>
+                <path refid="FOODSAFE.classpath"/>
+                <path refid="TomcatTest.libs"/>
+            </classpath>
+            <formatter type="brief" usefile="no"/>
+            <!--<batchtest fork="yes" todir="${junit.output.dir}">-->
+            <batchtest fork="yes">
+                <fileset dir="WEB-INF/test">
+                    <include name="**/*Test*.java"/>
+                    <exclude name="**/test/**"/>
+                    <!--<exclude name="**/*Support*.java"/>
+                    <exclude name="**/*Util*.java"/>
+                    <exclude name="**/*Exception*.java"/>-->
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+    
+    <target name="deploy" depends="war" description="Deploys the war file to a directory">
+        <!--<if>
+            <contains string="${deploy_context}" substring="test"/>
+            <then>
+                <copy file="build/${ant.project.name}.war" todir="${tomcat.test.webapps}"/>
+            </then>
+        </if>-->
+        <if>
+            <contains string="${deploy_context}" substring="prod"/>
+            <then>
+                <copy file="build/${ant.project.name}.war" todir="${tomcat.prod.webapps}"/>
+            </then>
+        </if>
+        <if>
+            <contains string="${deploy_context}" substring="local"/>
+            <then>
+                <copy file="build/${ant.project.name}.war" todir="${env.TOMCAT_HOME}/webapps"/>
+            </then>
+        </if>
+        <if>
+            <contains string="${deploy_context}" substring="dev"/>
+            <then>
+                <copy file="build/${ant.project.name}.war" todir="${tomcat.dev.webapps}"/>
+            </then>
+        </if>
+        <if>
+            <contains string="${deploy_context}" substring="test"/>
+            <then>
+                <copy file="build/${ant.project.name}.war" todir="${tomcat.test.webapps}"/>
+            </then>
+        </if>
+    </target>
+    
+    <target name="tomcat-stop">
+        <java jar="${env.TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+            <jvmarg value="-Dcatalina.home=${env.TOMCAT_HOME}"/>
+            <arg line="stop"/>
+        </java>
+    </target>
+    
+    <target name="tomcat-start-debug">
+        <java jar="${env.TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+            <jvmarg value="-Dcatalina.home=${env.TOMCAT_HOME}"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
+            <jvmarg value="-Djava.net.preferIPv4Stack=true"/>
+        </java>
+    </target>
+    
+    <target name="prepare" description="Preapare the tomcat directory">
+        <echo>Preparing the webapps dir</echo>
+        <echo>checking for ${env.TOMCAT_HOME}/webapps/${ant.project.name}.war</echo>
+        <if>
+            <available file="${env.TOMCAT_HOME}/webapps/${ant.project.name}.war" type="file"/>
+            <then>
+                <delete file="${env.TOMCAT_HOME}/webapps/${ant.project.name}.war"/>
+            </then>
+        </if>
+        <if>
+            <available file="${env.TOMCAT_HOME}/webapps/${ant.project.name}" type="dir"/>
+            <then>
+                <delete dir="${env.TOMCAT_HOME}/webapps/${ant.project.name}"/>
+            </then>
+        </if>
+    </target>
+    
+    <target name="war" depends="compile">
+        <war destfile="build/${ant.project.name}.war" webxml="WEB-INF/web.xml">
+            <lib dir="WEB-INF/lib"/>
+            <classes dir="build/classes"/>
+            <classes dir="WEB-INF/resources" includes="**/*.*"/>
+            <metainf dir="META-INF" includes="context.xml"/>
+            <fileset file="error.jsp"/>
+            <fileset file="logon.jsp"/>
+            <fileset file="logonError.jsp"/>
+            <fileset file="logOut.jsp"/>
+        </war>
+    </target>
+    
+    <target name="compile" depends="startBuild">
+        <javac destdir="build/classes" srcdir="WEB-INF/src" includeantruntime="true" debug="true">
+            <classpath refid="FOODSAFE.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="startBuild">
+        <description>Begin the build by making a classes directory</description>
+        <mkdir dir="build/classes"/>
+    </target>
+    
+    <target name="load_deploy_props" description="Load the deployment properties file.">
+        <loadproperties srcfile="ant/build.properties"/>
+    </target>
+    
+    <target name="deploy_javadoc" depends="javadoc" description="put the javadocs somewhere">
+        <copy todir="${javadoc.deploy.location}">
+            <fileset dir="doc"/>
+        </copy>
+    </target>
+    
+    <target name="javadoc">
+        <javadoc access="public" author="true" destdir="doc" nodeprecated="false"
+            nodeprecatedlist="false" classpath="${tomcat.dev.lib.dir}/*;WEB-INF/classes;WEB-INF/lib/*"
+            noindex="false" nonavbar="false" notree="false"
+            packagenames="
+            gov.ca.bc.qp.FOODSAFE.beans,
+            gov.ca.bc.qp.FOODSAFE.common,
+            gov.ca.bc.qp.FOODSAFE.dao,
+            gov.ca.bc.qp.FOODSAFE.util,
+            gov.ca.bc.qp.FOODSAFE.web"
+            source="1.6" sourcepath="WEB-INF/src;WEB-INF/resources;WEB-INF/test" splitindex="true"
+            use="true" version="true"> </javadoc>
+    </target>
+    
+    <target name="cleanup" description="Remove any build artifacts">
+        <echo>Cleaning artifacts</echo>
+        <if>
+            <available file="doc" type="dir"/>
+            <then>
+                <delete dir="doc"/>
+            </then>
+        </if>
+        <delete dir="build"/>
+    </target>
+    
+</project>

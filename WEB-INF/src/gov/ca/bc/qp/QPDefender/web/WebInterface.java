@@ -14,6 +14,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.beans.CredentialType;
 import gov.ca.bc.qp.QPDefender.config.ExternalResolver;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
@@ -283,6 +284,21 @@ public abstract class WebInterface {
 				exists = true;
 		}
 		return exists;
+	}
+	
+	/**
+	 * Updates a group to reflect the user that has modified it. Note that this method logs exceptions rather than
+	 * pushing them back to the client.
+	 * @param userid	The unique identifier for the user doing the modifying.
+	 * @param groupid	The unique identifier for the group that is being modified.
+	 */
+	public void updateGroupUserModified(int userid, int groupid) {
+		DAOGroup dao = new DAOGroup();
+		try {
+			dao.updateUserModified(userid, groupid);
+		} catch (DAOException e) {
+			this.getLogger().error("Unable to update User modifying the group");
+		}
 	}
 	
 	/**

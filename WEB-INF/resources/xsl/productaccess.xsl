@@ -10,6 +10,7 @@
 
 	<xsl:param name="roles" select="''"/>
 	<xsl:param name="msg" select="''"/>
+	<xsl:param name="uriPath" select="''"/>
 	<!-- Unique identifer for this users access and credentials, error if this is -1 (how do we add a product to a non-existant user access. -->
 	<xsl:param name="userCredId" select="-1"/>
 	<!-- Unique identifer for a product that this user access can access, if -1 we're adding -->
@@ -33,7 +34,14 @@
 					<form name="addProductAccess" action="/QPDefender/app/group/productAccess/userproduct/add" method="post">
 						<input type="hidden" name="userCredId" value="{$userCredId}"/>
 						<input type="hidden" name="userProductId" value="{productAccess/userProductsID}"/>
-						<input type="hidden" name="return_URI" value="/QPDefender/app/group/groups/ID/{$groupid}"/>
+						<input type="hidden" name="return_URI">
+							<xsl:attribute name="value">
+								<xsl:choose>
+									<xsl:when test="ends-with($uriPath, '/me')">/QPDefender/app/group/groups/me</xsl:when>
+									<xsl:otherwise>/QPDefender/app/group/groups/ID/<xsl:value-of select="$groupid"/></xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+						</input>
 						<table width="539" border="0" class="productSpecs">
 						  <tr class="thead">
 						    <td>Product</td>
