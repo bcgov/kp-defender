@@ -63,16 +63,14 @@
 			          </td>
 			          <xsl:variable name="atts">
 			          	<xsl:choose>
-			          		<xsl:when test="credentType = '2'">
-			          			<attr name="disabled">false</attr>
+			          		<xsl:when test="credentialType='SERVER_IP'">
 			          			<attr name="required">required</attr>
 			          		</xsl:when>
-			          		<xsl:otherwise><attr name="disabled">false</attr></xsl:otherwise>
+			          		<xsl:otherwise><attr name="disabled">true</attr></xsl:otherwise>
 			          	</xsl:choose>
 			          </xsl:variable>
 		              <td class="useraccess_credential2">
-		              	<label>Subnet Mask</label> <xsl:sequence select="fun:textInput(credential2, false(), $atts)"/>
-		              	
+		              	<label>Subnet Mask</label> <xsl:sequence select="fun:textInput(credential2, false(), $atts)"/>    	
 		              </td>
 					  <td class="meta_data">
 					  	<label>Meta String (ns:name=>value;)</label>

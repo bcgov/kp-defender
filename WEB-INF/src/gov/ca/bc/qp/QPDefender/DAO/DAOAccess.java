@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
+import gov.ca.bc.qp.qpcommon.authenticate.IPAuthenticator;
 import gov.ca.bc.qp.qpcommon.authenticate.PasswordHash;
 import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
@@ -95,6 +96,12 @@ public class DAOAccess extends DAOSecurity {
 				this.AddUpdateProductAccess(access.getUser().getGroupId(), userid, access);
 			// Everythings gone well, commit away.
 			con.commit();
+			
+			// Now if the credentials added where of the IP type reset our IPAuthentication cache.
+			if(!access.getCredentialType().equalsIgnoreCase(UserCredentials.CredType.STANDARD.toString())) {
+				log.info("User's Access has been added or modified. Updating IPAuthenticator cache to reflect changes.");
+				IPAuthenticator.reset();
+			}
 		} catch (SQLException e) {
 			try { 
 				con.rollback(); 
@@ -136,6 +143,9 @@ public class DAOAccess extends DAOSecurity {
 			stmt.setBoolean(6, pa.isActive());
 			stmt.setString(7, this.createRoleCSS(pa));
 			stmt.execute();
+			// Reset our IPAuthenticator Cache to reflect changes.
+			log.info("Product Access has been added or modified. Updating IPAuthenticator cache to reflect changes.");
+			IPAuthenticator.reset();
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
@@ -170,6 +180,9 @@ public class DAOAccess extends DAOSecurity {
 			stmt.registerOutParameter(6, java.sql.Types.INTEGER);
 			stmt.execute();
 			id = stmt.getInt(6);
+			// Reset our IPAuthenticator Cache to reflect changes.
+			log.info("Product Access has been added or modified. Updating IPAuthenticator cache to reflect changes.");
+			IPAuthenticator.reset();
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
@@ -247,9 +260,12 @@ public class DAOAccess extends DAOSecurity {
 				stmt.setString(7, this.createRoleCSS(pa));
 				stmt.execute();
 			} 
+			// Reset our IPAuthenticator Cache to reflect changes.
+			log.info("Product Access has been added or modified. Updating IPAuthenticator cache to reflect changes.");
+			IPAuthenticator.reset();
 
 		}catch(DAOException e) {
-			try { con.rollback(); } catch(Exception ignore) { log.error("Unable to roll back ProductAccess addition", ignore); }
+			//try { con.rollback(); } catch(Exception ignore) { log.error("Unable to roll back ProductAccess addition", ignore); }
 			complete = false;
 			throw e;
 		} catch (InvalidCharacterException e) {
@@ -357,6 +373,9 @@ public class DAOAccess extends DAOSecurity {
 			stmt = con.prepareCall("{call deleteProductAccess(?)}");
 			stmt.setInt(1, productAccessId);
 			stmt.execute();
+			// Reset our IPAuthenticator Cache to reflect changes.
+			log.info("Product Access has been deleted. Updating IPAuthenticator cache to reflect changes.");
+			IPAuthenticator.reset();
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
