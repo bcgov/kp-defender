@@ -82,7 +82,16 @@
 					<xsl:attribute name="value">
 						<xsl:choose>
 							<xsl:when test="ends-with($uriPath, '/me')">/QPDefender/app/group/groups/me</xsl:when>
-							<xsl:otherwise>/QPDefender/app/group/groups/ID/<xsl:value-of select="$groupid"/></xsl:otherwise>
+							<xsl:otherwise>
+								<xsl:choose>
+								  	<xsl:when test="not(user/groupId = '-1')">
+								  		/QPDefender/app/group/groups/ID/<xsl:value-of select="user/groupId"/>
+								  	</xsl:when>
+								  	<xsl:otherwise>
+								  		/QPDefender/app/group/groups/ID/<xsl:value-of select="$groupid"/>
+								  	</xsl:otherwise>
+								</xsl:choose>
+							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 				</input>

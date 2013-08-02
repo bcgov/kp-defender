@@ -337,6 +337,7 @@ public class WebGroup extends WebInterface {
 	public Response getGroup(@PathParam("ID") String id, 
 			@QueryParam("xsl") String optional_xsl, 
 			@QueryParam("return_URI") String optional_Return_URI) {
+		log.info("Getting group " + id);
 		Response response = null;
 		DAOGroup dao = new DAOGroup();
 		Group group = new Group();
