@@ -265,7 +265,7 @@ public class DAOGroup extends DAOSecurity {
 		PreparedStatement stmt = null;
 		try {
 			con = this.getConnectionPool().getConnection();
-			stmt = con.prepareStatement("UPDATE Group SET MODIFY_ID = " + Integer.toString(userid) + 
+			stmt = con.prepareStatement("UPDATE [Group] SET MODIFY_ID = " + Integer.toString(userid) + 
 					" WHERE ID = " + Integer.toString(groupid));
 			stmt.execute();
 		} catch (SQLException e) {

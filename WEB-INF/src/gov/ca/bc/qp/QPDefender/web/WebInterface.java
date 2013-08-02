@@ -297,7 +297,7 @@ public abstract class WebInterface {
 		try {
 			dao.updateUserModified(userid, groupid);
 		} catch (DAOException e) {
-			this.getLogger().error("Unable to update User modifying the group");
+			this.getLogger().error("Unable to update User modifying the group", e);
 		}
 	}
 	
