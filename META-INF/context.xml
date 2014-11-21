@@ -1,3 +1,0 @@
-<Context reloadable="true" crossContext="true">
-	<ResourceLink global="jdbc/QP_Security" name="jdbc/QP_Security" type="javax.sql.DataSource"/>
-</Context>
