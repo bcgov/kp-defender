@@ -19,8 +19,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import qp.sentry.QPPrincipal;
-
 import gov.ca.bc.qp.QPDefender.beans.Group;
 import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
