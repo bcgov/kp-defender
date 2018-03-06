@@ -14,50 +14,73 @@
 	<xsl:param name="msg"/>
 	    
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
+	
+	<xsl:template match="groups" mode="groups">
+		<html>
+			<head>
+				<title>Groups</title>
+			</head>
+			<h2>Groups</h2>
+			<ul>
+				<xsl:apply-templates mode="groups"/>
+			</ul>
+		</html>
+	</xsl:template>
+	
+	<xsl:template match="group" mode="groups">
+		<li><a href="{concat('/QPDefender/app/group/groups/ID/', id)}"><xsl:value-of select="company_ministry"/></a></li>
+	</xsl:template>
 	            
 
 	<xsl:template match="/">
-		<html>
-			<xsl:sequence select="fun:printHeader('Add Group')"/>
-			<script type="text/javascript">
-				/* Here */
-				<xsl:sequence select="fun:printUserAccessJavascript()"/>
-			</script>
-			<body>
-					<div class="group_information">
-						<xsl:choose>
-							<xsl:when test="group/id &gt; 0">
-								<h1>
-									<xsl:value-of select="group/dept_branch"/>
-								</h1>
-								<div class="topNav"><a href="#">Search Group</a> | <a href="#">Search Users</a> | <a href="#">Add Product</a></div>
-								<div class="auto_info">
-									<div class="CreatedBy">Created By: <xsl:value-of select="group/insert_user/username"/></div>
-									<div class="CreatedDate">Created On: <xsl:value-of select="fun:parseDate(group/insert_dt)"/></div>
-									<div class="ModifiedBy">Modified By: <xsl:value-of select="group/modify_user/username"/></div>
-									<div class="ModifiedDate">Modified On: <xsl:value-of select="fun:parseDate(group/modify_dt)"/></div>
-								</div>
-							</xsl:when>
-							<xsl:otherwise>
-								<h1>Add Group</h1>
-							</xsl:otherwise>
-						</xsl:choose>
-						<div class="form_container">
-							<xsl:for-each select="$msg">
-								<h3><font color="red"><xsl:value-of select="fun:decodeUrL(.)"/></font></h3>
-							</xsl:for-each>
-							<xsl:apply-templates select="group"/>
-						</div>
-						<xsl:if test="group/id &gt; 0">
-							<div class="addProduct"> 
-								<a href="/QPDefender/app/useraccess/groupid={group/id}/useraccess/empty" class="lbOn">
-									<img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a>
+		<xsl:choose>
+			<xsl:when test="groups">
+				<xsl:apply-templates mode="groups"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<html>
+					<xsl:sequence select="fun:printHeader('Add Group')"/>
+					<script type="text/javascript">
+						/* Here */
+						<xsl:sequence select="fun:printUserAccessJavascript()"/>
+					</script>
+					<body>
+						<div class="group_information">
+							<xsl:choose>
+								<xsl:when test="group/id &gt; 0">
+									<h1>
+										<xsl:value-of select="group/dept_branch"/>
+									</h1>
+									<div class="topNav"><a href="#">Search Group</a> | <a href="#">Search Users</a> | <a href="#">Add Product</a></div>
+									<div class="auto_info">
+										<div class="CreatedBy">Created By: <xsl:value-of select="group/insert_user/username"/></div>
+										<div class="CreatedDate">Created On: <xsl:value-of select="fun:parseDate(group/insert_dt)"/></div>
+										<div class="ModifiedBy">Modified By: <xsl:value-of select="group/modify_user/username"/></div>
+										<div class="ModifiedDate">Modified On: <xsl:value-of select="fun:parseDate(group/modify_dt)"/></div>
+									</div>
+								</xsl:when>
+								<xsl:otherwise>
+									<h1>Add Group</h1>
+								</xsl:otherwise>
+							</xsl:choose>
+							<div class="form_container">
+								<xsl:for-each select="$msg">
+									<h3><font color="red"><xsl:value-of select="fun:decodeUrL(.)"/></font></h3>
+								</xsl:for-each>
+								<xsl:apply-templates select="group"/>
 							</div>
-							<xsl:apply-templates select="group/users"/>
-						</xsl:if>
-					</div>
-			</body>
-		</html>
+							<xsl:if test="group/id &gt; 0">
+								<div class="addProduct"> 
+									<a href="/QPDefender/app/useraccess/groupid={group/id}/useraccess/empty" class="lbOn">
+										<img src="/QPDefender/app/none/resources/media/img/add.png" alt="" width="18" height="18" border="0" align="absmiddle"/> Add User</a>
+								</div>
+								<xsl:apply-templates select="group/users"/>
+							</xsl:if>
+						</div>
+					</body>
+				</html>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 
