@@ -60,6 +60,43 @@ public class DAOGroup extends DAOSecurity {
 			try { stmt.close(); } catch(Exception ignore) {}			
 		}
 	}
+	
+	
+	/**
+	 * Returns a list of all groups
+	 * @return
+	 * @throws DAOException 
+	 * @throws ObjectNotFoundException 
+	 */
+	public List<Group> lookupGroups() throws DAOException, ObjectNotFoundException {
+		List<Group> groups = new ArrayList<>();
+		Connection con = null;
+		CallableStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Next we'll lookup the group infomation.
+			con = this.getConnectionPool().getConnection();
+			// Call our stored procedure.
+			stmt = con.prepareCall("{call LookupGroups()}");
+			// Retrieve result set.
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Group group = this.populateGroup(rs);
+				groups.add(group);
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} catch (UnknownCredentialException e) {
+			throw new DAOException(e);
+		} finally {
+			try { this.getConnectionPool().closeConnection(con); } catch(Exception ignore) {}
+			try { stmt.close(); } catch(Exception ignore) {}
+			try { rs.close(); } catch(Exception ignore) {}
+		}
+		return groups;
+	}
+	
 	/**
 	 * Looks up a group based on a unique identifier.
 	 * @param groupId Unique identifier for a group.

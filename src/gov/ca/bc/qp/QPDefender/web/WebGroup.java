@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
 import gov.ca.bc.qp.QPDefender.beans.Group;
@@ -22,10 +23,16 @@ import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
 import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
+import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -40,9 +47,14 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 
 
@@ -391,6 +403,54 @@ public class WebGroup extends WebInterface {
 		*/
 		}
 		
+		return response;
+	}
+	
+	/**
+	 * @return a list of groups and their associated information.
+	 */
+	@GET
+	@Path("/all")
+	@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XML})
+	@RolesAllowed({MyRoles.QP_ADMIN})
+	public Response getGroups() {
+		MediaType type = MediaType.APPLICATION_XML_TYPE;
+		QPMarshaller marshaller = new QPMarshaller();
+		Response response = null;
+		try {
+			// Get a list of groups
+			DAOGroup dao = new DAOGroup();
+			List<Group> groups = dao.lookupGroups();
+			// Marshal them with a wrapper.
+			Document document = marshaller.marshalToDomWrapped(groups, "groups");
+			// Transform our xsl
+			if(!this.xsl.equals(DefaultResolver.NO_TRANSFORM)) {
+				XSLTResolver resolver = new DefaultResolver(this.xsl, this.getPrincipal(), this.uriInfo, this);
+				XSLTTransformer trans = XSLTTransformer.getInstance(resolver);
+				document = trans.transform(document, resolver.getParams());
+				type = MediaType.TEXT_HTML_TYPE;
+			}
+			response = null;
+			response = Response.ok().entity(document).type(type).build();
+		} catch (JAXBException e) {
+			log.error("Exception getting list of products.", e);
+			response = Response.serverError().build();
+		} catch (ParserConfigurationException e) {
+			log.error("Exception when marshalling a list of products.", e);
+			response = Response.serverError().build();
+		} catch (DAOException e) {
+			log.error("Exception when accessing our data source for list of products.", e);
+			response = Response.serverError().build();
+		} catch (TransformerConfigurationException e) {
+			log.error("Exception creating our transformer", e);
+			response = Response.serverError().build();
+		} catch (TransformerException e) {
+			log.error("Exception creating our transformer", e);
+			response = Response.serverError().build();
+		} catch (ObjectNotFoundException e) {
+			log.error("Exception getting groups", e);
+			response = Response.status(404).build();
+		}
 		return response;
 	}
 
