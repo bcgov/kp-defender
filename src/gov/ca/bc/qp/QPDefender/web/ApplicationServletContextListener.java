@@ -13,7 +13,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
@@ -23,13 +22,10 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class ApplicationServletContextListener implements ServletContextListener
 {
-	
-	static final Logger log = Logger.getLogger(ApplicationServletContextListener.class);
-	
     public void contextInitialized(ServletContextEvent event) 
     { 
 	ServletContext ctx = event.getServletContext();
-	log.info("Initializing QPDefender Application");
+
 	String prefix =  ctx.getRealPath("/");     
 	String file = "WEB-INF"+System.getProperty("file.separator")+"classes"+System.getProperty("file.separator")+"log4j.properties";
 
