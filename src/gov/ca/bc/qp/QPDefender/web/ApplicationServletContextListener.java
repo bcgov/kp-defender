@@ -9,11 +9,10 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
 
 /**
  * Listener for registering log4j 
@@ -21,17 +20,21 @@ import org.apache.log4j.PropertyConfigurator;
  * located in the resources folder.
  */
 public class ApplicationServletContextListener implements ServletContextListener
+
+	
 {
+	static final Logger log = Logger.getLogger(ApplicationServletContextListener.class);
     public void contextInitialized(ServletContextEvent event) 
     { 
-	ServletContext ctx = event.getServletContext();
-
-	String prefix =  ctx.getRealPath("/");     
-	String file = "WEB-INF"+System.getProperty("file.separator")+"classes"+System.getProperty("file.separator")+"log4j.properties";
-
-	if(file != null) {
-	    PropertyConfigurator.configure(prefix+file);
-	}   
+    	log.info("initializing qpdefender");
+//	ServletContext ctx = event.getServletContext();
+//
+//	String prefix =  ctx.getRealPath("/");     
+//	String file = "WEB-INF"+System.getProperty("file.separator")+"classes"+System.getProperty("file.separator")+"log4j.properties";
+//
+//	if(file != null) {
+//	    PropertyConfigurator.configure(prefix+file);
+//	}   
     }
 
     public void contextDestroyed(ServletContextEvent event){ /* ignore */}
