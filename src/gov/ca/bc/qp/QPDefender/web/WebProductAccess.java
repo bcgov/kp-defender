@@ -1,18 +1,5 @@
 package gov.ca.bc.qp.QPDefender.web;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
-
-import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
-import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
-import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
-import gov.ca.bc.qp.QPDefender.config.MyRoles;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
-import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -23,12 +10,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
+import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
+import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 @Path("{xsl:.+}/productAccess")
 public class WebProductAccess extends WebInterface {
 
-	private static final Logger logger = Logger.getLogger(WebProductAccess.class);
+	private static final Logger logger = LogManager.getLogger(WebProductAccess.class);
 
 	/** 
 	 * @return An empty representation of a product that a user has access to.

@@ -9,7 +9,8 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
@@ -18,7 +19,7 @@ public class ExternalResolver extends DefaultResolver {
 	// Pattern for resolving our external xslt paths
 	private static final Pattern EXTERNAL_XSL_PATTERN = Pattern.compile("(.+\\.xsl[t]?)(.*)");
 	private static final Pattern EXTERNAL_PARAM_PATTERN = Pattern.compile("/([^=]+)=([^/]+)");
-	private static final Logger log = Logger.getLogger(ExternalResolver.class);
+	private static final Logger log = LogManager.getLogger(ExternalResolver.class);
 	
 
 	/**

@@ -9,14 +9,17 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOCredentialType;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOCredentialType;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 /**
  * JAX-RS interface for accessing product information.
@@ -25,7 +28,7 @@ import org.apache.log4j.Logger;
 @Path("{xsl:.+}/credentialtype")
 public class WebCredentialType extends WebInterface {
 
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LogManager.getLogger(getClass());
 	
 	/**
 	 * Looks up all the customer types within the data source.

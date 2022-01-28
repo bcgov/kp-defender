@@ -10,18 +10,19 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
 import gov.ca.bc.qp.QPDefender.beans.UnknownCredentialException;
-import gov.ca.bc.qp.qpcommon.authenticate.IPAuthenticator;
-import gov.ca.bc.qp.qpcommon.authenticate.PasswordHash;
-import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
 import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.IPAuthenticator;
+import gov.ca.bc.qp.qpcommon.authenticate.PasswordHash;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
+import gov.ca.bc.qp.qpcommon.authenticate.ProductAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.Role;
 import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
 import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
 import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
 import gov.ca.bc.qp.qpcommon.connection.DAOException;
@@ -32,7 +33,7 @@ import gov.ca.bc.qp.qpcommon.connection.DAOSecurity;
  * @author spencer.tickner
  */
 public class DAOAccess extends DAOSecurity {
-	Logger log = Logger.getLogger(this.getClass());
+	Logger log = LogManager.getLogger(this.getClass());
 
 	/**
 	 * Deletes a user and all the access that is assigned to them.

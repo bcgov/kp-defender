@@ -14,19 +14,6 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
-import gov.ca.bc.qp.QPDefender.beans.CredentialType;
-import gov.ca.bc.qp.QPDefender.config.ExternalResolver;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-import gov.ca.bc.qp.qpcommon.authenticate.User;
-import gov.ca.bc.qp.qpcommon.code.QPBean;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
-
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -38,8 +25,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
+import gov.ca.bc.qp.QPDefender.config.ExternalResolver;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.code.QPBean;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
+import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 /**
  * Utility class for common functionality across Web interfaces. A note that this class

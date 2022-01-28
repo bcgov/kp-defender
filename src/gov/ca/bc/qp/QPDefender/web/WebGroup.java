@@ -16,23 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
-import gov.ca.bc.qp.QPDefender.beans.Group;
-import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
-import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
-import gov.ca.bc.qp.QPDefender.config.MyRoles;
-import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.Product;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-import gov.ca.bc.qp.qpcommon.authenticate.User;
-import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -47,14 +30,32 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
+import gov.ca.bc.qp.QPDefender.beans.Group;
+import gov.ca.bc.qp.QPDefender.beans.GroupProduct;
+import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
+import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
+import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 
 
@@ -66,7 +67,7 @@ import org.w3c.dom.Document;
 @Path("{xsl:.+}/groups")
 public class WebGroup extends WebInterface {
 
-	final static Logger log = Logger.getLogger(WebGroup.class);
+	final static Logger log = LogManager.getLogger(WebGroup.class);
 	
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;

@@ -1,18 +1,18 @@
 package gov.ca.bc.qp.QPDefender.utility;
 
-import gov.ca.bc.qp.qpcommon.code.QPBean;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.qpcommon.code.QPBean;
 
 public class ObjectUtil {
 
-	static Logger log = Logger.getLogger(ObjectUtil.class);
+	static Logger log = LogManager.getLogger(ObjectUtil.class);
 	private static Date emptyDate = null;
 	
 	public static Date getEmptyDate() {

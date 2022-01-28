@@ -9,15 +9,16 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
 
 /**
  * Convenience lookup methods for gathering application specific data.
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
 @Path("{xsl:.+}/lookup")
 public class WebLookup {
 	
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LogManager.getLogger(getClass());
 
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;

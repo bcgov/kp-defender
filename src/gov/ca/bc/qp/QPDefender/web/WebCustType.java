@@ -11,33 +11,19 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import java.util.List;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOCustType;
-import gov.ca.bc.qp.QPDefender.beans.CustType;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
-
 import javax.annotation.security.PermitAll;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOCustType;
+import gov.ca.bc.qp.QPDefender.beans.CustType;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 /**
  * JAX-RS interface for accessing product information.
@@ -46,7 +32,7 @@ import org.w3c.dom.Document;
 @Path("{xsl:.+}/custtype")
 public class WebCustType extends WebInterface {
 
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LogManager.getLogger(getClass());
 	
 	// Grab our context to get our principal.
 	/*

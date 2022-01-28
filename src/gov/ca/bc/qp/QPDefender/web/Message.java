@@ -11,7 +11,8 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,7 +31,7 @@ public enum Message {
 	CREDENTIALS_TO_SHORT("Credentials are not long enough");
 
 	// We have an exception we don't handle,, we must log this.
-	Logger logger = Logger.getLogger(this.getClass());
+	Logger logger = LogManager.getLogger(this.getClass());
 	
 	// Private member variable
 	private Document docMessage = null;

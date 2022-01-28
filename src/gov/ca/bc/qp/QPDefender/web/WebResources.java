@@ -1,16 +1,6 @@
 package gov.ca.bc.qp.QPDefender.web;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.List;
-
-import gov.ca.bc.qp.QPDefender.utility.QPMediaType;
-import gov.ca.bc.qp.qpcommon.authenticate.Product;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -27,13 +17,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+
+import gov.ca.bc.qp.QPDefender.utility.QPMediaType;
+import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
+import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
+import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
 
 @Path("{xsl:.+}/resources")
 public class WebResources {
 
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LogManager.getLogger(getClass());
 
 	// Grab our context to get our principal.
 	@Context private SecurityContext securityContext;

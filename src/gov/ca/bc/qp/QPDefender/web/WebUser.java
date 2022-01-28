@@ -1,53 +1,33 @@
 package gov.ca.bc.qp.QPDefender.web;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.List;
-
-import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
-import gov.ca.bc.qp.QPDefender.DAO.DAOCredentialType;
-import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
-import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
-import gov.ca.bc.qp.QPDefender.beans.CredentialType;
-import gov.ca.bc.qp.QPDefender.beans.Group;
-import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
-import gov.ca.bc.qp.QPDefender.config.MyRoles;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.QPPrincipal;
-import gov.ca.bc.qp.qpcommon.authenticate.User;
-import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
-import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTResolver;
-import gov.ca.bc.qp.qpcommon.dom.XSLTTransformer;
-import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
+import gov.ca.bc.qp.QPDefender.DAO.DAOCredentialType;
+import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
+import gov.ca.bc.qp.QPDefender.beans.CredentialType;
+import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
+import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
+import gov.ca.bc.qp.qpcommon.code.ObjectNotFoundException;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 /**
  * JAX-RS interface for accessing a users own information.
@@ -56,7 +36,7 @@ import org.w3c.dom.Document;
 @Path("{xsl:.+}/user")
 public class WebUser extends WebInterface {
 
-	Logger log = Logger.getLogger(getClass());
+	Logger log = LogManager.getLogger(getClass());
 
 	// Grab our context to get our principal.
 	/*

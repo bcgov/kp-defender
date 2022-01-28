@@ -2,14 +2,6 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import java.util.List;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
-import gov.ca.bc.qp.QPDefender.config.MyRoles;
-import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.Role;
-import gov.ca.bc.qp.qpcommon.authenticate.User;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -19,11 +11,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOGroup;
+import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.qpcommon.authenticate.DAORoles;
+import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
+import gov.ca.bc.qp.qpcommon.authenticate.Role;
+import gov.ca.bc.qp.qpcommon.authenticate.User;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 @Path("{xsl:.+}/roles")
 public class WebRoles extends WebInterface {
-	private static final Logger logger = Logger.getLogger(WebRoles.class);
+	private static final Logger logger = LogManager.getLogger(WebRoles.class);
 	
 	@GET
 	@Path("/userrole/empty")

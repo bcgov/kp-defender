@@ -26,7 +26,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 import gov.ca.bc.qp.QPDefender.config.MyRoles;
@@ -44,7 +45,7 @@ import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
 @Path("{xsl:.+}/products")
 public class WebProduct extends WebInterface {
 
-	static final Logger log = Logger.getLogger(WebProduct.class);
+	static final Logger log = LogManager.getLogger(WebProduct.class);
 
 	// Grab our context to get our principal.
 	/*

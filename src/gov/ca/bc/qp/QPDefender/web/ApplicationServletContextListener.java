@@ -12,7 +12,8 @@ package gov.ca.bc.qp.QPDefender.web;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Listener for registering log4j 
@@ -23,7 +24,7 @@ public class ApplicationServletContextListener implements ServletContextListener
 
 	
 {
-	static final Logger log = Logger.getLogger(ApplicationServletContextListener.class);
+	static final Logger log = LogManager.getLogger(ApplicationServletContextListener.class);
     public void contextInitialized(ServletContextEvent event) 
     { 
     	log.info("initializing qpdefender");

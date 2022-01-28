@@ -9,14 +9,6 @@
  */
 package gov.ca.bc.qp.QPDefender.web;
 
-import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
-import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
-import gov.ca.bc.qp.QPDefender.config.MyRoles;
-import gov.ca.bc.qp.qpcommon.authenticate.DAOUser;
-import gov.ca.bc.qp.qpcommon.authenticate.User;
-import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
-import gov.ca.bc.qp.qpcommon.connection.DAOException;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,7 +17,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import gov.ca.bc.qp.QPDefender.DAO.DAOAccess;
+import gov.ca.bc.qp.QPDefender.DAO.InvalidCharacterException;
+import gov.ca.bc.qp.QPDefender.config.MyRoles;
+import gov.ca.bc.qp.qpcommon.authenticate.UserAccess;
+import gov.ca.bc.qp.qpcommon.connection.DAOException;
 
 /**
  * JAX-RS interface for accessing user access information.
@@ -34,7 +33,7 @@ import org.apache.log4j.Logger;
 @Path("{xsl:.+}/useraccess")
 public class WebUserAccess extends WebInterface {
 
-	Logger log = Logger.getLogger(this.getClass());
+	Logger log = LogManager.getLogger(this.getClass());
 	
 	@GET
 	@Path("empty")
