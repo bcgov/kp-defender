@@ -11,12 +11,15 @@
   			pre-curser to ensure we don't get into a resource infinite loop as noted 
   			below.</description>
 		<servlet-name>qpDefender</servlet-name>
-		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<!-- <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<description>This parameter is needed to enable security annotation for Jersey 
 				within a J2EE container.</description>
-			<param-name>com.sun.jersey.spi.container.ResourceFilters</param-name>
-			<param-value>com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory</param-value>
+			<!-- <param-name>com.sun.jersey.spi.container.ResourceFilters</param-name> -->
+			<!-- <param-value>com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory</param-value> -->
+			<param-name>javax.ws.rs.container.DynamicFeature</param-name>
+			<param-value>javax.ws.rs.container.RolesAllowedDynamicFeature</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -55,6 +58,22 @@
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>MyRealm Restricted</web-resource-name>
+			<description>Security for entire project Restrictions</description>
+			<url-pattern>/app/*</url-pattern>
+			<http-method-omission>GET</http-method-omission>
+			<http-method-omission>POST</http-method-omission>
+			<http-method-omission>PUT</http-method-omission>
+			<http-method-omission>DELETE</http-method-omission>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>Allow all roles access to our security-domain. Explicit restrictions.</description>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>	
+	
 	<login-config>
 		<auth-method>QP</auth-method>
 		<form-login-config>

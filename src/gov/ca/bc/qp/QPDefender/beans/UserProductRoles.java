@@ -16,6 +16,9 @@ import javax.xml.bind.annotation.XmlType;
 import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.Role;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
+/*import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;*/
 
 @XmlRootElement(name="UserProductRoles")
 @XmlType(name="", propOrder={"userProductRolesId","userProductId", "productRolesId", "role"})

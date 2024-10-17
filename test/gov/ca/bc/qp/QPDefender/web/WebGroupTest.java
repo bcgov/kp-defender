@@ -2,7 +2,7 @@ package gov.ca.bc.qp.QPDefender.web;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+//import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Assert;
@@ -18,6 +18,7 @@ import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
 import gov.ca.bc.qp.qpcommon.dom.QPSchemaValidator;
 import gov.ca.bc.qp.qpcommon.dom.ValidationException;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.w3c.dom.Document;

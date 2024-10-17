@@ -1,6 +1,6 @@
 package gov.ca.bc.qp.QPDefender.web;
 
-import javax.xml.bind.JAXBException;
+//import javax.xml.bind.JAXBException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +11,7 @@ import gov.ca.bc.qp.qpcommon.authenticate.UserCredentials;
 import gov.ca.bc.qp.qpcommon.authenticate.UserMetaData;
 import gov.ca.bc.qp.qpcommon.dom.DefaultResolver;
 import gov.ca.bc.qp.qpcommon.marshal.QPMarshaller;
+import jakarta.xml.bind.JAXBException;
 
 public class WebUserTest extends gov.ca.bc.qp.QPDefender.test.DataSourceTestUtil   {
 

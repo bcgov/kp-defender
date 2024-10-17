@@ -5,6 +5,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import gov.ca.bc.qp.qpcommon.code.QPBean;
+/*import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;*/
 
 /**
  * The different types of groups that are tracked.

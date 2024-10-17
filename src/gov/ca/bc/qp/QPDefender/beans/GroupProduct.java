@@ -19,6 +19,9 @@ import javax.xml.bind.annotation.XmlType;
 import gov.ca.bc.qp.QPDefender.utility.ObjectUtil;
 import gov.ca.bc.qp.qpcommon.authenticate.Product;
 import gov.ca.bc.qp.qpcommon.code.QPBean;
+/*import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;*/
 
 /**
  * Object for tracking groups and the products they have access to.
