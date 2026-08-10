@@ -1,0 +1,4 @@
+<Context reloadable="true" crossContext="true">
+	<ResourceLink global="jdbc/<DB_NAME>" name="jdbc/<DB_NAME>" type="javax.sql.DataSource"/>
+	<Realm className="gov.ca.bc.qp.qpcommon.authenticate.MyRealm" myVariable="test"/>
+</Context>
